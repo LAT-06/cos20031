@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitions</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="archers.html">Archers</a></li>
+                <li><a href="rounds.html">Rounds</a></li>
+                <li><a href="scores.html">Scores</a></li>
+                <li><a href="competitions.html" class="active">Competitions</a></li>
+                <li><a href="control.html">Control</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Competition Management</h1>
+        <section class ="container-search">
+          <search>
+            <input type="text" placeholder="Search competitions...">
+            <button type="submit">Search</button>
+          </search>
+        </section>
+        <section class ="container-filter">
+          <filter>
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+              <option value="all">All</option>
+              <option value="date">Date</option>
+              <option value ="status"> Status</option>
+            </select>
+          </filter>
+        </section>
+        <section class = "container-add">
+            <button type="button">Add New Competition</button>
+        </section>
+        <section class = "container-table">
+          <div>
+            <table>
+                <thead>
+                    <tr>
+                    <th>Competition ID</th>
+                    <th>Competition Name</th>
+                    <th>Date</th>
+                    <th>Rounds included</th>
+                    <th>Participants</th>
+                    <th>Championship</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>1</td>
+                    <td>Club open 2025</td>
+                    <td>2025-10-12</td>
+                    <td>WA120/60</td>
+                    <td>44</td>
+                    <td><button>yes</button><button>no</button></td>
+                    <td>Verified</td>
+                    <td>
+                        <button type="button">Edit</button>
+                        <button type="button">Delete</button>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>1</td>
+                    <td>Club open 2025</td>
+                    <td>2025-10-12</td>
+                    <td>WA120/60</td>
+                    <td>44</td>
+                    <td><button>yes</button><button>no</button></td>
+                    <td>Verified</td>
+                    <td>
+                        <button type="button">Edit</button>
+                        <button type="button">Delete</button>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>1</td>
+                    <td>Club open 2025</td>
+                    <td>2025-10-12</td>
+                    <td>WA120/60</td>
+                    <td>44</td>
+                    <td><button>yes</button><button>no</button></td>
+                    <td>Verified</td>
+                    <td>
+                        <button type="button">Edit</button>
+                        <button type="button">Delete</button>
+                    </td>
+                    </tr>
+                    <!-- More rows as needed -->
+                </tbody>
+            </table>
+          </div>
+        </section>
+    </main>
+</body>
+</html>
+

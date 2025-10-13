@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="archers.html">Archers</a></li>
+                <li><a href="rounds.html">Rounds</a></li>
+                <li><a href="scores.html">Scores</a></li>
+                <li><a href="competitions.html">Competitions</a></li>
+                <li><a href="control.html" class="active">Control</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Control Management</h1>
+        <section class ="container-search">
+          <search>
+            <input type="text" placeholder="Search scores...">
+            <button type="submit">Search</button>
+          </search>
+        </section>
+        <section class ="container-filter">
+          <filter>
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+              <option value="all">All</option>
+              <option value="Unverified">Unverified</option>
+              <option value="Verified">Verified</option>
+              <option value="New">New</option>
+            </select>
+          </filter>
+        </section>
+        <section class = "container-add">
+            <button type="button">Verify Score</button>
+        </section>
+        <section class = "container-table">
+          <div>
+            <table>
+                <thead>
+                    <tr>
+                    <th>Score ID</th>
+                    <th>Archer Name</th>
+                    <th>Round</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Total score</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>WA120</td>  
+                    <td>Practice</td>
+                    <td>2023-10-01</td>
+                    <td>650</td>
+                    <td>Verified</td>
+                    <td>
+                        <button type="button">Verify</button>
+                        <button type="button">Delete</button>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>WA120</td>  
+                    <td>Competition</td>
+                    <td>2023-10-01</td>
+                    <td>650</td>
+                    <td>Verified</td>
+                    <td>
+                        <button type="button">Verify</button>
+                        <button type="button">Delete</button>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>WA120</td>  
+                    <td>Recurve</td>
+                    <td>2023-10-01</td>
+                    <td>650</td>
+                    <td>Verified</td>
+                    <td>
+                        <button type="button">Verify</button>
+                        <button type="button">Delete</button>
+                    </td>
+                    </tr>
+                    <!-- More rows as needed -->
+                </tbody>
+            </table>
+          </div>
+        </section>
+    </main>
+</body>
+</html>
+

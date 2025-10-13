@@ -1,0 +1,270 @@
+
+:root{
+	--bg: #f6f5f4; /* overall light background */
+	--panel: #ffffff; /* card background */
+	--muted: #e9e7e7; /* muted panels */
+	--accent: #eecfcf; /* subtle pink accent */
+	--brand: #111111; /* primary text / dark */
+	--muted-text: #6c6c6c;
+	--shadow: 0 10px 25px rgba(17,17,17,0.08);
+	--soft-shadow: 0 6px 18px rgba(17,17,17,0.06);
+	--radius: 14px;
+	--radius-sm: 10px;
+	--gap: 24px;
+}
+
+/* Global reset */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+	margin:0;
+	font-family: Arial, sans-serif;
+    font-size:16px;
+	background:var(--bg);
+	color:var(--brand);
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:grayscale;
+}
+
+/* Layout */
+.app-root{display:flex;min-height:100vh}
+
+/* Sidebar */
+header{
+	width:200px;
+	min-width:200px;
+	background:linear-gradient(180deg,var(--panel), #faf9f9);
+	padding:28px 20px;
+	border-radius:18px;
+	margin:18px;
+	box-shadow:var(--soft-shadow);
+	display:flex;
+	flex-direction:column;
+	gap:18px;
+}
+header nav{
+	display:flex;
+	flex-direction:column;
+	gap:8px;
+	margin-top:8px
+}
+nav ul{
+	list-style:none;
+	padding:0;
+	margin:0;
+	display:flex;
+	flex-direction:column;
+	gap:8px;
+	background:transparent;
+	box-shadow:none
+}
+header nav ul li a{
+	display:inline-flex;
+	align-items:center;
+	padding:12px 14px;
+	border-radius:10px;
+	color:var(--brand);
+	text-decoration:none;
+	font-weight:600;
+}
+nav ul a:hover{background:var(--muted)}
+nav ul a.active{
+	background: var(--muted);
+	color:var(--brand)
+}
+/*dashboard*/
+
+header{
+	position:fixed;
+	left:18px;
+	top:18px;
+	bottom:18px;
+	width:200px;
+	padding:28px 20px;
+	border-radius:18px;
+	background:linear-gradient(180deg,var(--panel), #fff);
+	box-shadow:var(--soft-shadow);
+	z-index:20;
+}
+
+/* Main content sits to the right of the fixed sidebar */
+.dashboard{
+	margin-left:236px; /* 18px (left gap) + 200px (sidebar) + 18px spacing */
+	padding:36px 40px;
+	min-height:100vh;
+	background:transparent;
+	display:grid;
+	grid-template-columns:repeat(2, 1fr);
+	gap:24px;
+}
+
+/* Page title large and aligned with the mockup */
+main h1{font-size:44px;margin:6px 0 8px;color:var(--brand);font-weight:800;grid-column:1 / -1}
+
+/* Card used on the dashboard */
+.dashboard-grid{
+	display:block;
+	padding:0;
+	margin:0;
+	border-radius:0;
+	box-shadow:none;
+	background:transparent;
+}
+
+/* The visible panels inside each section */
+.dashboard-card{
+	background:var(--panel);
+	border-radius:14px;
+	padding:18px;
+	box-shadow:var(--shadow);
+	display:grid;
+	grid-template-columns:repeat(2, 1fr);
+	gap:12px;
+	width:100%;
+}
+
+/* Ensure each section occupies its grid cell and cards fill available space */
+main > .dashboard-grid, main > section {align-self:start}
+.dashboard-card{height:100%;
+	min-height:160px;
+}
+/* Inner horizontal block elements inside a dashboard card */
+.dashboard-card-content{
+	display:grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap:12px;
+	align-items:center; 
+}
+.dashboard-card h3{grid-column:1 / -1;margin:0}
+.dashboard-card-content p{margin:0;color:var(--muted-text)}
+
+
+/* Quick actions*/
+.quick-action{grid-column:1 / -1}
+.quick-action .dashboard-card{padding:20px}
+.quick-action .dashboard-card .dashboard-card-content{display:flex;gap:18px}
+.quick-action .dashboard-card .dashboard-card-content > div{
+	flex:0 0 160px;
+	height:120px;
+	border-radius:14px;
+	border:1px solid rgba(17,17,17,0.06);
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	font-weight:800;
+	background:var(--panel)}
+.quick-action .dashboard-card button{
+	background:transparent;
+	border:0;
+	padding:0;
+	font-weight:700;
+	cursor:pointer
+}
+
+
+@media (max-width:900px){
+	main{margin-left:18px;grid-template-columns:1fr;padding:18px}
+	header{
+		position:relative;
+		width:auto;
+		left:auto;
+		top:auto;
+		bottom:auto;
+		border-radius:12px;
+		margin-bottom:12px
+	}
+}
+
+/*archer*/
+main {
+  margin-left:236px; /* 18px (left gap) + 200px (sidebar) + 18px spacing */
+	padding:36px 40px;
+	min-height:100vh;
+}
+.container-search,
+.container-filter,
+.container-add {
+  display: inline-block;
+  margin-right: 1px;
+}
+
+.container-search input {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 220px;
+}
+
+.container-search button,
+.container-add button {
+  background-color: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.container-search button:hover,
+.container-add button:hover {
+  background-color: #444;
+}
+
+.container-filter select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+/* table */
+.container-table {
+  margin-top: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+thead {
+  background-color: #f3f3f3;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background-color: #fafafa;
+}
+
+td button {
+  border: none;
+  background: none;
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+td button:hover {
+  text-decoration: underline;
+}
+
+/* scrollbar*/
+::-webkit-scrollbar {
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+

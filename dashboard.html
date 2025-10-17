@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archery Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-root">
+        <header class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="competition.html">Competitions</a></li>
+                    <li><a href="round.html">Rounds Info</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="main-header">
+                <h1>Dashboard</h1>
+                <div class="user-profile">
+                    <span>Nguyen Minh</span>
+                    <img src="sunset.jpg" alt="User Avatar" class="avatar">
+                </div>
+            </div>    
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3>Personal Data</h3>
+                    <p>Last Score (12/10): <strong>70 / 80</strong></p>
+                    <p>Personal Best (Portsmouth): <strong>585</strong></p>
+                </div>
+                <div class="info-box">
+                    <h3>Summaries</h3>
+                    <p>Latest Competition: <strong>Club Championship</strong></p>
+                    <p>Your Standing: <strong>2nd Place</strong></p>
+                </div>
+                <div class="info-box" style="grid-column: 1 / -1;">
+                    <h3>Quick Links & Tools</h3>
+                    <div class="quick-links-grid">
+                        <button class="quick-link-button">Add Scores</button>
+                        <button class="quick-link-button">My Score History</button>
+                        <button class="quick-link-button">My Personal Bests</button>
+                        <button class="quick-link-button">Manage Equipment</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

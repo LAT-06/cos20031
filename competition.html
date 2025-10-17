@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitions - Archery Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-root">
+        <header class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="competition.html" class="active">Competitions</a></li>
+                    <li><a href="round.html">Rounds Info</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="main-header">
+                <h1>Competitions</h1>
+                <div class="user-profile">
+                    <span>Nguyen Minh</span>
+                    <img src="sunset.jpg" alt="User Avatar" class="avatar">
+                </div>
+            </div> 
+            <div class="table-controls">
+                <input type="text" placeholder="Search competitions...">
+                <button type="submit">Search</button>
+                <select>
+                  <option value="all">Category: All</option>
+                  <option value="upcoming">Upcoming</option>
+                </select>
+                <button type="button">Add New Competition</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Competition Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Club Championship</td>
+                            <td>2025-10-12</td>
+                            <td>Completed</td>
+                            <td><button type="button">Edit</button><button type="button">Delete</button></td>
+                        </tr>
+                        <tr>
+                            <td>Halloween Fun Shoot</td>
+                            <td>2025-10-31</td>
+                            <td>Upcoming</td>
+                            <td><button type="button">Edit</button><button type="button">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3>Latest Results</h3>
+                    <p>Club Championship: <strong>Jane Doe (580)</strong></p>
+                </div>
+                <div class="info-box">
+                    <h3>Club Records</h3>
+                    <p>Portsmouth: <strong>585</strong> (David Chen)</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rounds Info - Archery Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-root">
+        <header class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="competition.html">Competitions</a></li>
+                    <li><a href="round.html" class="active">Rounds Info</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="main-header">
+                <h1>Rounds Information</h1>
+                <div class="user-profile">
+                    <span>Nguyen Minh</span>
+                    <img src="sunset.jpg" alt="User Avatar" class="avatar">
+                </div>
+            </div> 
+            <div class="table-controls">
+                <input type="text" placeholder="Search rounds...">
+                <button type="submit">Search</button>
+                <select>
+                  <option value="all">Type: All</option>
+                  <option value="indoor">Indoor</option>
+                </select>
+                <button type="button">Add New Round</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Round Name</th>
+                            <th>Type</th>
+                            <th>Max Score</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Portsmouth</td>
+                            <td>Indoor</td>
+                            <td>600</td>
+                            <td><button type="button">Edit</button><button type="button">Delete</button></td>
+                        </tr>
+                        <tr>
+                            <td>WA 18</td>
+                            <td>Indoor</td>
+                            <td>600</td>
+                            <td><button type="button">Edit</button><button type="button">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3>Distance</h3>
+                    <p>20 yards (or 18 meters)</p>
+                </div>
+                <div class="info-box">
+                    <h3>Target Face Size</h3>
+                    <p>60cm Target Face</p>
+                </div>
+                 <div class="info-box">
+                    <h3>Ends & Arrows</h3>
+                    <p>60 arrows, shot in ends of 3.</p>
+                </div>
+                 <div class="info-box">
+                    <h3>Equivalent Rounds</h3>
+                    <p>Similar to a FITA 18 round.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+

@@ -30,10 +30,15 @@ const ScoreRecord = sequelize.define(
       allowNull: false,
     },
     Status: {
-      type: DataTypes.ENUM("staged", "approved", "rejected"),
+      type: DataTypes.ENUM("staged", "pending", "approved", "rejected"),
       defaultValue: "staged",
     },
     TotalScore: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    TotalHits: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,

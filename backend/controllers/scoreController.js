@@ -375,8 +375,9 @@ exports.approveScore = async (req, res) => {
       return res.status(404).json({ error: "Score not found" });
     }
 
-    if (scoreRecord.Status !== "staged") {
-      return res.status(400).json({ error: "Score is not in staged status" });
+    // Can approve from staged or pending status
+    if (!["staged", "pending"].includes(scoreRecord.Status)) {
+      return res.status(400).json({ error: "Score cannot be approved from current status" });
     }
 
     scoreRecord.Status = "approved";
@@ -410,8 +411,9 @@ exports.rejectScore = async (req, res) => {
       return res.status(404).json({ error: "Score not found" });
     }
 
-    if (scoreRecord.Status !== "staged") {
-      return res.status(400).json({ error: "Score is not in staged status" });
+    // Can reject from staged or pending status
+    if (!["staged", "pending"].includes(scoreRecord.Status)) {
+      return res.status(400).json({ error: "Score cannot be rejected from current status" });
     }
 
     scoreRecord.Status = "rejected";
@@ -459,6 +461,10 @@ exports.updateScoreStatus = async (req, res) => {
     if (status === "approved") {
       scoreRecord.ApprovedBy = req.userId;
       scoreRecord.ApprovedAt = new Date();
+    } else if (status === "pending" || status === "staged") {
+      // Reset approval fields if changing back to pending or staged
+      scoreRecord.ApprovedBy = null;
+      scoreRecord.ApprovedAt = null;
     }
 
     // If rejecting, add reason to notes

@@ -1,7 +1,12 @@
 <template>
   <div class="app-root">
     <header>
-      <h1>Admin Panel</h1>
+      <div class="header-title">
+        <h1>{{ authStore.isAdmin ? 'Admin' : 'Recorder' }} Panel</h1>
+        <span class="role-badge" :class="`badge-${user?.role}`">
+          {{ user?.role }}
+        </span>
+      </div>
       <nav>
         <ul>
           <li><router-link to="/admin">Dashboard</router-link></li>
@@ -13,6 +18,9 @@
           </li>
           <li>
             <router-link to="/admin/championships">Championships</router-link>
+          </li>
+          <li>
+            <router-link to="/admin/profile-requests">Profile Requests</router-link>
           </li>
         </ul>
       </nav>
@@ -62,3 +70,34 @@ function handleLogout() {
   router.push("/login");
 }
 </script>
+
+<style scoped>
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.header-title h1 {
+  margin: 0;
+}
+
+.role-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-admin {
+  background: #dc3545;
+  color: white;
+}
+
+.badge-recorder {
+  background: #ffc107;
+  color: #000;
+}
+</style>

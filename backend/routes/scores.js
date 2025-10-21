@@ -34,6 +34,12 @@ router.post(
   roleCheck(["admin", "recorder"]),
   scoreController.rejectScore
 );
+router.put(
+  "/:id/status",
+  auth,
+  roleCheck(["admin", "recorder"]),
+  scoreController.updateScoreStatus
+);
 
 // Admin only
 router.delete("/:id", auth, roleCheck("admin"), scoreController.deleteScore);

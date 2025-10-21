@@ -30,6 +30,9 @@
           <router-link to="/archer/rounds" class="action-btn"
             >View Rounds</router-link
           >
+          <router-link to="/archer/profile" class="action-btn"
+            >My Profile</router-link
+          >
         </div>
       </div>
     </section>

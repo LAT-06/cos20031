@@ -37,28 +37,38 @@ This system allows archery clubs to:
 
 ### User Roles
 
-#### Admin
+#### Admin 👑
 
-- Full system access
-- User management (create, edit, delete, assign roles)
-- Approve/reject scores
-- Manage rounds, competitions, championships
+- **Full system access** with all permissions
+- User management (create, edit, delete users, assign roles)
+- Approve/reject scores with detailed review
+- Complete CRUD for rounds, competitions, championships
+- Delete any records (archers, scores, competitions, etc.)
 - View all statistics and records
+- Manage recorder accounts
 
-#### Recorder
+#### Recorder 📋
 
-- Approve/reject scores
-- Create competitions
-- Enter competition scores
-- Manage rounds
+- **Limited administrative access** for day-to-day operations
+- Approve/reject scores with reason tracking
+- View detailed score breakdowns (ends and arrows)
+- Add and edit archers (archer role only)
+- Create and edit rounds, competitions, championships
+- Manage base data (classes, divisions, categories)
+- **Cannot delete any records** (safety restriction)
+- **Cannot create admin/recorder accounts** (security restriction)
+- View all statistics and pending scores
 
-#### Archer
+See [Recorder Guide](./RECORDER_GUIDE.md) for detailed permissions and workflows.
+
+#### Archer 🏹
 
 - Enter personal scores
 - View score history and statistics
 - View personal bests
 - Browse competition results
 - Look up round definitions
+- Submit scores for approval
 
 ### Core Functionality
 
@@ -137,12 +147,23 @@ npm run dev
 
 Frontend will run on `http://localhost:5173`
 
-### Default Login
+### Default Accounts
 
+After running `npm run seed`, you can login with:
+
+#### Admin Account
 - **Email**: `admin@archery.club`
 - **Password**: `admin123`
+- **Role**: Administrator (full access)
 
-⚠️ **Change the default password after first login!**
+#### Recorder Account
+- **Email**: `recorder@archery.club`
+- **Password**: `recorder123`
+- **Role**: Recorder (limited access)
+
+⚠️ **Important**: Change default passwords after first login in production!
+
+For detailed recorder permissions and workflows, see [RECORDER_GUIDE.md](./RECORDER_GUIDE.md).
 
 ## 📂 Project Structure
 
@@ -278,12 +299,29 @@ prj/
 
 ### Manual Testing Scenarios
 
-1. **Admin logs in** → Can access all features
-2. **Archer signs up** → Can login and see archer dashboard
-3. **Archer stages a score** → Appears in recorder's pending list
-4. **Recorder approves score** → Becomes visible in archer's history
-5. **Create competition** → Add scores → View leaderboard
-6. **View personal bests** → Check club records
+1. **Admin logs in** → Can access all features, see red "Admin" badge
+2. **Recorder logs in** → Can access recorder panel, see yellow "Recorder" badge
+3. **Archer signs up** → Can login and see archer dashboard
+4. **Archer stages a score** → Appears in recorder's pending list
+5. **Recorder reviews score** → Can approve or reject with reason
+6. **Admin manages users** → Can create/edit/delete archers and assign roles
+7. **Recorder creates archer** → Can only assign "Archer" role (security restriction)
+8. **Recorder tries to delete** → Delete buttons hidden (permission restriction)
+9. **Create competition** → Add scores → View leaderboard
+10. **View personal bests** → Check club records
+
+#### Testing Recorder Permissions
+
+Login as recorder (`recorder@archery.club` / `recorder123`) and verify:
+
+- ✅ Can view all archers, scores, rounds, competitions
+- ✅ Can add new archers (archer role only)
+- ✅ Can edit existing archers
+- ✅ Can approve/reject pending scores
+- ✅ Can create/edit rounds, competitions, championships
+- ❌ Cannot delete any records (buttons hidden)
+- ❌ Cannot assign admin/recorder roles (dropdown restricted)
+- ✅ UI shows "Recorder Panel" with yellow badge
 
 ## 🚀 Deployment
 
@@ -327,6 +365,7 @@ npm run build
 
 - [Backend README](./backend/README.md) - Detailed backend documentation
 - [Frontend README](./frontend/README.md) - Detailed frontend documentation
+- [Recorder Guide](./RECORDER_GUIDE.md) - Complete guide for recorder role users
 
 ## 🐛 Known Issues & TODO
 

@@ -53,6 +53,11 @@ const routes = [
         name: "AdminChampionships",
         component: () => import("@/views/admin/Championships.vue"),
       },
+      {
+        path: "profile-requests",
+        name: "AdminProfileRequests",
+        component: () => import("@/views/admin/ProfileRequests.vue"),
+      },
     ],
   },
   {
@@ -84,6 +89,11 @@ const routes = [
         path: "rounds",
         name: "ArcherRounds",
         component: () => import("@/views/archer/Rounds.vue"),
+      },
+      {
+        path: "profile",
+        name: "ArcherProfile",
+        component: () => import("@/views/archer/Profile.vue"),
       },
     ],
   },

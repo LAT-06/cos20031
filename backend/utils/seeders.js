@@ -204,7 +204,9 @@ async function seed() {
     // Create default admin user
     console.log("Creating default admin user...");
     const recurve = divisions.find((d) => d.Name === "Recurve");
+    const compound = divisions.find((d) => d.Name === "Compound");
     const maleOpen = classes.find((c) => c.Name === "Male Open");
+    const femaleOpen = classes.find((c) => c.Name === "Female Open");
 
     await Archer.create({
       FirstName: "Admin",
@@ -220,6 +222,23 @@ async function seed() {
     console.log("Default admin created!");
     console.log("Email: admin@archery.club");
     console.log("Password: admin123");
+
+    // Create default recorder user
+    console.log("\nCreating default recorder user...");
+    await Archer.create({
+      FirstName: "Recorder",
+      LastName: "User",
+      DateOfBirth: "1992-05-15",
+      Gender: "Female",
+      Email: "recorder@archery.club",
+      PasswordHash: "recorder123", // Will be hashed by model hook
+      Role: "recorder",
+      DefaultDivisionID: compound.DivisionID,
+      ClassID: femaleOpen.ClassID,
+    });
+    console.log("Default recorder created!");
+    console.log("Email: recorder@archery.club");
+    console.log("Password: recorder123");
 
     console.log("\n✅ Database seeding completed successfully!");
     process.exit(0);

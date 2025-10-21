@@ -1,6 +1,12 @@
 <template>
   <div class="dashboard">
-    <h1>Admin Dashboard</h1>
+    <h1>{{ authStore.isAdmin ? 'Admin' : 'Recorder' }} Dashboard</h1>
+    <p style="color: var(--muted-text); margin-top: -12px;">
+      Welcome back, {{ authStore.user?.firstName }}! 
+      <span v-if="!authStore.isAdmin" style="font-style: italic;">
+        (Score Recorder)
+      </span>
+    </p>
 
     <section class="dashboard-card">
       <h3>Total Archers</h3>
@@ -87,7 +93,10 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useAuthStore } from "@/stores/auth";
 import api from "@/services/api";
+
+const authStore = useAuthStore();
 
 const stats = ref({
   totalArchers: 0,

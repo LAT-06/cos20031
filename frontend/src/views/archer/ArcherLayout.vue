@@ -13,6 +13,7 @@
             <router-link to="/archer/competitions">Competitions</router-link>
           </li>
           <li><router-link to="/archer/rounds">Rounds</router-link></li>
+          <li><router-link to="/archer/profile">My Profile</router-link></li>
         </ul>
       </nav>
 

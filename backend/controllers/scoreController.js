@@ -433,6 +433,56 @@ exports.rejectScore = async (req, res) => {
 };
 
 /**
+ * Update score status (recorder/admin)
+ */
+exports.updateScoreStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, reason } = req.body;
+
+    // Validate status
+    const validStatuses = ["staged", "pending", "approved", "rejected"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const scoreRecord = await ScoreRecord.findByPk(id);
+
+    if (!scoreRecord) {
+      return res.status(404).json({ error: "Score not found" });
+    }
+
+    // Update status
+    scoreRecord.Status = status;
+
+    // If approving, set approved by and date
+    if (status === "approved") {
+      scoreRecord.ApprovedBy = req.userId;
+      scoreRecord.ApprovedAt = new Date();
+    }
+
+    // If rejecting, add reason to notes
+    if (status === "rejected" && reason) {
+      scoreRecord.Notes = reason
+        ? `${scoreRecord.Notes || ""}\nRejection reason: ${reason}`
+        : scoreRecord.Notes;
+    }
+
+    scoreRecord.UpdatedAt = new Date();
+
+    await scoreRecord.save();
+
+    res.json({
+      message: "Score status updated successfully",
+      score: scoreRecord,
+    });
+  } catch (error) {
+    console.error("Update score status error:", error);
+    res.status(500).json({ error: "Failed to update score status" });
+  }
+};
+
+/**
  * Delete score (admin)
  */
 exports.deleteScore = async (req, res) => {

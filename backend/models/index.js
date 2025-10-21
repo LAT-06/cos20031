@@ -14,6 +14,7 @@ const ChampionshipCompetition = require("./ChampionshipCompetition");
 const ScoreRecord = require("./ScoreRecord");
 const End = require("./End");
 const Arrow = require("./Arrow");
+const ArcherUpdateRequest = require("./ArcherUpdateRequest");
 
 // Define associations
 
@@ -99,6 +100,20 @@ End.belongsTo(ScoreRecord, { foreignKey: "ScoreRecordID", as: "scoreRecord" });
 End.hasMany(Arrow, { foreignKey: "EndID", as: "arrows", onDelete: "CASCADE" });
 Arrow.belongsTo(End, { foreignKey: "EndID", as: "end" });
 
+// ArcherUpdateRequest associations
+ArcherUpdateRequest.belongsTo(Archer, {
+  foreignKey: "ArcherID",
+  as: "Archer",
+});
+ArcherUpdateRequest.belongsTo(Archer, {
+  foreignKey: "ReviewedBy",
+  as: "Reviewer",
+});
+Archer.hasMany(ArcherUpdateRequest, {
+  foreignKey: "ArcherID",
+  as: "updateRequests",
+});
+
 // Export all models and sequelize instance
 module.exports = {
   sequelize,
@@ -115,4 +130,5 @@ module.exports = {
   ScoreRecord,
   End,
   Arrow,
+  ArcherUpdateRequest,
 };

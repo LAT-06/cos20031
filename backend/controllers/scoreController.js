@@ -377,7 +377,9 @@ exports.approveScore = async (req, res) => {
 
     // Can approve from staged or pending status
     if (!["staged", "pending"].includes(scoreRecord.Status)) {
-      return res.status(400).json({ error: "Score cannot be approved from current status" });
+      return res
+        .status(400)
+        .json({ error: "Score cannot be approved from current status" });
     }
 
     scoreRecord.Status = "approved";
@@ -413,7 +415,9 @@ exports.rejectScore = async (req, res) => {
 
     // Can reject from staged or pending status
     if (!["staged", "pending"].includes(scoreRecord.Status)) {
-      return res.status(400).json({ error: "Score cannot be rejected from current status" });
+      return res
+        .status(400)
+        .json({ error: "Score cannot be rejected from current status" });
     }
 
     scoreRecord.Status = "rejected";

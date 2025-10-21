@@ -22,9 +22,17 @@
           <option value="rejected">Rejected</option>
         </select>
 
-        <select v-model="filterRound" @change="loadScores" style="margin-left: 12px">
+        <select
+          v-model="filterRound"
+          @change="loadScores"
+          style="margin-left: 12px"
+        >
           <option value="">All Rounds</option>
-          <option v-for="round in rounds" :key="round.RoundID" :value="round.RoundID">
+          <option
+            v-for="round in rounds"
+            :key="round.RoundID"
+            :value="round.RoundID"
+          >
             {{ round.Name }}
           </option>
         </select>
@@ -71,8 +79,10 @@
             <td>{{ formatDate(score.DateShot) }}</td>
             <td>{{ score.archer.FirstName }} {{ score.archer.LastName }}</td>
             <td>{{ score.round.Name }}</td>
-            <td>{{ score.division?.Name || 'N/A' }}</td>
-            <td><strong>{{ score.TotalScore }}</strong></td>
+            <td>{{ score.division?.Name || "N/A" }}</td>
+            <td>
+              <strong>{{ score.TotalScore }}</strong>
+            </td>
             <td>{{ score.TotalHits }}</td>
             <td>
               <span :class="`badge badge-${score.Status}`">
@@ -80,31 +90,33 @@
               </span>
             </td>
             <td>
-              <button class="btn-small btn-info" @click="viewScore(score)">View</button>
-              <button 
-                v-if="score.Status === 'pending'" 
-                class="btn-small btn-success" 
+              <button class="btn-small btn-info" @click="viewScore(score)">
+                View
+              </button>
+              <button
+                v-if="score.Status === 'pending'"
+                class="btn-small btn-success"
                 @click="approveScore(score)"
               >
                 Approve
               </button>
-              <button 
-                v-if="score.Status === 'pending'" 
-                class="btn-small btn-danger" 
+              <button
+                v-if="score.Status === 'pending'"
+                class="btn-small btn-danger"
                 @click="rejectScore(score)"
               >
                 Reject
               </button>
-              <button 
-                class="btn-small btn-warning" 
+              <button
+                class="btn-small btn-warning"
                 @click="editStatus(score)"
                 style="margin-left: 4px"
               >
                 Edit Status
               </button>
-              <button 
+              <button
                 v-if="authStore.isAdmin"
-                class="btn-small btn-danger" 
+                class="btn-small btn-danger"
                 @click="deleteScore(score)"
               >
                 Delete
@@ -112,7 +124,7 @@
             </td>
           </tr>
           <tr v-if="scores.length === 0">
-            <td colspan="8" style="text-align: center; padding: 40px;">
+            <td colspan="8" style="text-align: center; padding: 40px">
               No scores found
             </td>
           </tr>
@@ -131,7 +143,10 @@
           <div class="score-header">
             <div class="detail-item">
               <label>Archer:</label>
-              <span>{{ selectedScore.archer.FirstName }} {{ selectedScore.archer.LastName }}</span>
+              <span
+                >{{ selectedScore.archer.FirstName }}
+                {{ selectedScore.archer.LastName }}</span
+              >
             </div>
             <div class="detail-item">
               <label>Date Shot:</label>
@@ -143,7 +158,7 @@
             </div>
             <div class="detail-item">
               <label>Division:</label>
-              <span>{{ selectedScore.division?.Name || 'N/A' }}</span>
+              <span>{{ selectedScore.division?.Name || "N/A" }}</span>
             </div>
             <div class="detail-item">
               <label>Total Score:</label>
@@ -155,7 +170,9 @@
             </div>
             <div class="detail-item">
               <label>Status:</label>
-              <span :class="`badge badge-${selectedScore.Status}`">{{ selectedScore.Status }}</span>
+              <span :class="`badge badge-${selectedScore.Status}`">{{
+                selectedScore.Status
+              }}</span>
             </div>
           </div>
 
@@ -167,7 +184,11 @@
                 <span>Score: {{ end.EndScore }} | Hits: {{ end.EndHits }}</span>
               </div>
               <div class="arrows-grid">
-                <div v-for="arrow in end.arrows" :key="arrow.ArrowID" class="arrow-badge">
+                <div
+                  v-for="arrow in end.arrows"
+                  :key="arrow.ArrowID"
+                  class="arrow-badge"
+                >
                   {{ arrow.Score }}
                 </div>
               </div>
@@ -175,17 +196,19 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeViewModal">Close</button>
-          <button 
-            v-if="selectedScore?.Status === 'pending'" 
-            class="btn btn-success" 
+          <button class="btn btn-secondary" @click="closeViewModal">
+            Close
+          </button>
+          <button
+            v-if="selectedScore?.Status === 'pending'"
+            class="btn btn-success"
             @click="approveScore(selectedScore)"
           >
             Approve
           </button>
-          <button 
-            v-if="selectedScore?.Status === 'pending'" 
-            class="btn btn-danger" 
+          <button
+            v-if="selectedScore?.Status === 'pending'"
+            class="btn btn-danger"
             @click="rejectScore(selectedScore)"
           >
             Reject
@@ -203,10 +226,18 @@
         </div>
         <div class="modal-body">
           <div class="score-info">
-            <p><strong>Archer:</strong> {{ editingScore?.archer.FirstName }} {{ editingScore?.archer.LastName }}</p>
+            <p>
+              <strong>Archer:</strong> {{ editingScore?.archer.FirstName }}
+              {{ editingScore?.archer.LastName }}
+            </p>
             <p><strong>Round:</strong> {{ editingScore?.round.Name }}</p>
             <p><strong>Score:</strong> {{ editingScore?.TotalScore }}</p>
-            <p><strong>Current Status:</strong> <span :class="`badge badge-${editingScore?.Status}`">{{ editingScore?.Status }}</span></p>
+            <p>
+              <strong>Current Status:</strong>
+              <span :class="`badge badge-${editingScore?.Status}`">{{
+                editingScore?.Status
+              }}</span>
+            </p>
           </div>
 
           <div class="form-group">
@@ -221,17 +252,25 @@
 
           <div v-if="newStatus === 'rejected'" class="form-group">
             <label>Rejection Reason (required for rejected status):</label>
-            <textarea 
-              v-model="rejectionReason" 
-              rows="3" 
+            <textarea
+              v-model="rejectionReason"
+              rows="3"
               placeholder="Enter reason for rejection..."
               required
             ></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeEditModal">Cancel</button>
-          <button class="btn btn-primary" @click="saveStatus" :disabled="!newStatus || (newStatus === 'rejected' && !rejectionReason)">
+          <button class="btn btn-secondary" @click="closeEditModal">
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            @click="saveStatus"
+            :disabled="
+              !newStatus || (newStatus === 'rejected' && !rejectionReason)
+            "
+          >
             Save Changes
           </button>
         </div>
@@ -241,19 +280,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import api from '@/services/api';
+import { ref, onMounted, computed } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import api from "@/services/api";
 
 const authStore = useAuthStore();
 
 const scores = ref([]);
 const rounds = ref([]);
 const loading = ref(false);
-const error = ref('');
-const searchTerm = ref('');
-const filterStatus = ref('');
-const filterRound = ref('');
+const error = ref("");
+const searchTerm = ref("");
+const filterStatus = ref("");
+const filterRound = ref("");
 
 const showViewModal = ref(false);
 const selectedScore = ref(null);
@@ -261,15 +300,19 @@ const scoreDetails = ref([]);
 
 const showEditModal = ref(false);
 const editingScore = ref(null);
-const newStatus = ref('');
-const rejectionReason = ref('');
+const newStatus = ref("");
+const rejectionReason = ref("");
 
 const stats = computed(() => {
   return {
-    pending: scores.value.filter(s => s.Status === 'pending').length,
-    approved: scores.value.filter(s => s.Status === 'approved').length,
-    total: scores.value.length
+    pending: scores.value.filter((s) => s.Status === "pending").length,
+    approved: scores.value.filter((s) => s.Status === "approved").length,
+    total: scores.value.length,
   };
+});
+
+const filteredScores = computed(() => {
+  return scores.value;
 });
 
 onMounted(() => {
@@ -279,7 +322,7 @@ onMounted(() => {
 
 async function loadScores() {
   loading.value = true;
-  error.value = '';
+  error.value = "";
 
   try {
     const params = {};
@@ -287,10 +330,10 @@ async function loadScores() {
     if (filterStatus.value) params.status = filterStatus.value;
     if (filterRound.value) params.roundId = filterRound.value;
 
-    const response = await api.get('/scores', { params });
+    const response = await api.get("/scores", { params });
     scores.value = response.data.scores;
   } catch (err) {
-    error.value = err.response?.data?.error || 'Failed to load scores';
+    error.value = err.response?.data?.error || "Failed to load scores";
   } finally {
     loading.value = false;
   }
@@ -298,30 +341,34 @@ async function loadScores() {
 
 async function loadRounds() {
   try {
-    const response = await api.get('/rounds');
+    const response = await api.get("/rounds");
     rounds.value = response.data.rounds;
   } catch (err) {
-    console.error('Failed to load rounds:', err);
+    console.error("Failed to load rounds:", err);
   }
 }
 
 async function viewScore(score) {
   selectedScore.value = score;
-  
+
   // Load detailed end/arrow data
   try {
     const response = await api.get(`/scores/${score.ScoreRecordID}`);
     scoreDetails.value = response.data.score.ends || [];
   } catch (err) {
-    console.error('Failed to load score details:', err);
+    console.error("Failed to load score details:", err);
     scoreDetails.value = [];
   }
-  
+
   showViewModal.value = true;
 }
 
 async function approveScore(score) {
-  if (!confirm(`Approve score of ${score.TotalScore} for ${score.archer.FirstName} ${score.archer.LastName}?`)) {
+  if (
+    !confirm(
+      `Approve score of ${score.TotalScore} for ${score.archer.FirstName} ${score.archer.LastName}?`
+    )
+  ) {
     return;
   }
 
@@ -330,12 +377,12 @@ async function approveScore(score) {
     await loadScores();
     closeViewModal();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to approve score');
+    alert(err.response?.data?.error || "Failed to approve score");
   }
 }
 
 async function rejectScore(score) {
-  const reason = prompt('Enter rejection reason (optional):');
+  const reason = prompt("Enter rejection reason (optional):");
   if (reason === null) return; // User cancelled
 
   try {
@@ -343,12 +390,16 @@ async function rejectScore(score) {
     await loadScores();
     closeViewModal();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to reject score');
+    alert(err.response?.data?.error || "Failed to reject score");
   }
 }
 
 async function deleteScore(score) {
-  if (!confirm(`Are you sure you want to delete this score?\n\nArcher: ${score.archer.FirstName} ${score.archer.LastName}\nScore: ${score.TotalScore}\n\nThis cannot be undone.`)) {
+  if (
+    !confirm(
+      `Are you sure you want to delete this score?\n\nArcher: ${score.archer.FirstName} ${score.archer.LastName}\nScore: ${score.TotalScore}\n\nThis cannot be undone.`
+    )
+  ) {
     return;
   }
 
@@ -357,7 +408,7 @@ async function deleteScore(score) {
     await loadScores();
     closeViewModal();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to delete score');
+    alert(err.response?.data?.error || "Failed to delete score");
   }
 }
 
@@ -368,54 +419,59 @@ function closeViewModal() {
 }
 
 function editStatus(score) {
+  console.log("Edit Status clicked for score:", score);
   editingScore.value = score;
   newStatus.value = score.Status;
-  rejectionReason.value = '';
+  rejectionReason.value = "";
   showEditModal.value = true;
+  console.log("showEditModal set to:", showEditModal.value);
 }
 
 function closeEditModal() {
   showEditModal.value = false;
   editingScore.value = null;
-  newStatus.value = '';
-  rejectionReason.value = '';
+  newStatus.value = "";
+  rejectionReason.value = "";
 }
 
 async function saveStatus() {
   if (!newStatus.value) {
-    alert('Please select a status');
+    alert("Please select a status");
     return;
   }
 
-  if (newStatus.value === 'rejected' && !rejectionReason.value.trim()) {
-    alert('Rejection reason is required');
+  if (newStatus.value === "rejected" && !rejectionReason.value.trim()) {
+    alert("Rejection reason is required");
     return;
   }
 
   try {
     const payload = {
-      status: newStatus.value
+      status: newStatus.value,
     };
 
-    if (newStatus.value === 'rejected' && rejectionReason.value) {
+    if (newStatus.value === "rejected" && rejectionReason.value) {
       payload.reason = rejectionReason.value;
     }
 
-    await api.put(`/scores/${editingScore.value.ScoreRecordID}/status`, payload);
-    alert('Status updated successfully');
+    await api.put(
+      `/scores/${editingScore.value.ScoreRecordID}/status`,
+      payload
+    );
+    alert("Status updated successfully");
     closeEditModal();
     await loadScores();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to update status');
+    alert(err.response?.data?.error || "Failed to update status");
   }
 }
 
 function formatDate(date) {
-  if (!date) return 'N/A';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+  if (!date) return "N/A";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }
 </script>
@@ -664,10 +720,10 @@ function formatDate(date) {
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  background: #2d2d2d;
+  background: #ffffff;
   border: 1px solid #444;
   border-radius: 4px;
-  color: #ffffff;
+  color: #000000;
   font-size: 1rem;
   font-family: inherit;
 }

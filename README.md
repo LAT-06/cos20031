@@ -152,11 +152,13 @@ Frontend will run on `http://localhost:5173`
 After running `npm run seed`, you can login with:
 
 #### Admin Account
+
 - **Email**: `admin@archery.club`
 - **Password**: `admin123`
 - **Role**: Administrator (full access)
 
 #### Recorder Account
+
 - **Email**: `recorder@archery.club`
 - **Password**: `recorder123`
 - **Role**: Recorder (limited access)

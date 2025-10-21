@@ -1,180 +1,192 @@
 <template>
-  <div class="profile-requests">
-    <div class="header-section">
-      <h1>Profile Update Requests</h1>
-      <div class="stats">
-        <span class="stat-badge">{{ requests.length }} Pending</span>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div v-if="!loading && requests.length === 0" class="empty-state">
-      <div class="empty-icon">✓</div>
-      <h3>No Pending Requests</h3>
-      <p>All profile update requests have been processed.</p>
-    </div>
-
-    <!-- Requests List -->
-    <div v-else class="requests-list">
-      <div
-        v-for="request in requests"
-        :key="request.RequestID"
-        class="request-card"
-      >
-        <div class="request-header">
-          <div class="archer-info">
-            <h3>
-              {{ request.Archer.FirstName }} {{ request.Archer.LastName }}
-            </h3>
-            <p class="email">{{ request.Archer.Email }}</p>
-            <div class="badges">
-              <span class="badge badge-class">{{
-                request.Archer.class?.ClassName
-              }}</span>
-              <span class="badge badge-division">{{
-                request.Archer.defaultDivision?.Name
-              }}</span>
-            </div>
-          </div>
-          <div class="request-date">
-            <small>Submitted</small>
-            <span>{{ formatDate(request.CreatedAt) }}</span>
-          </div>
+  <main>
+    <div class="profile-requests">
+      <div class="header-section">
+        <h1>Profile Update Requests</h1>
+        <div class="stats">
+          <span class="stat-badge">{{ requests.length }} Pending</span>
         </div>
+      </div>
 
-        <div class="changes-section">
-          <h4>Requested Changes:</h4>
-          <div class="changes-grid">
-            <div v-if="request.FirstName" class="change-item">
-              <label>First Name</label>
-              <div class="change-values">
-                <span class="old-value">{{ request.Archer.FirstName }}</span>
-                <span class="arrow">→</span>
-                <span class="new-value">{{ request.FirstName }}</span>
-              </div>
-            </div>
+      <!-- Empty State -->
+      <div v-if="!loading && requests.length === 0" class="empty-state">
+        <div class="empty-icon">✓</div>
+        <h3>No Pending Requests</h3>
+        <p>All profile update requests have been processed.</p>
+      </div>
 
-            <div v-if="request.LastName" class="change-item">
-              <label>Last Name</label>
-              <div class="change-values">
-                <span class="old-value">{{ request.Archer.LastName }}</span>
-                <span class="arrow">→</span>
-                <span class="new-value">{{ request.LastName }}</span>
-              </div>
-            </div>
-
-            <div v-if="request.Email" class="change-item">
-              <label>Email</label>
-              <div class="change-values">
-                <span class="old-value">{{ request.Archer.Email }}</span>
-                <span class="arrow">→</span>
-                <span class="new-value">{{ request.Email }}</span>
-              </div>
-            </div>
-
-            <div v-if="request.DateOfBirth" class="change-item">
-              <label>Date of Birth</label>
-              <div class="change-values">
-                <span class="old-value">{{
-                  formatDate(request.Archer.DateOfBirth)
+      <!-- Requests List -->
+      <div v-else class="requests-list">
+        <div
+          v-for="request in requests"
+          :key="request.RequestID"
+          class="request-card"
+        >
+          <div class="request-header">
+            <div class="archer-info">
+              <h3>
+                {{ request.Archer.FirstName }} {{ request.Archer.LastName }}
+              </h3>
+              <p class="email">{{ request.Archer.Email }}</p>
+              <div class="badges">
+                <span class="badge badge-class">{{
+                  request.Archer.class?.ClassName
                 }}</span>
-                <span class="arrow">→</span>
-                <span class="new-value">{{ formatDate(request.DateOfBirth) }}</span>
-              </div>
-            </div>
-
-            <div v-if="request.Gender" class="change-item">
-              <label>Gender</label>
-              <div class="change-values">
-                <span class="old-value">{{ request.Archer.Gender }}</span>
-                <span class="arrow">→</span>
-                <span class="new-value">{{ request.Gender }}</span>
-              </div>
-            </div>
-
-            <div v-if="request.DivisionID" class="change-item">
-              <label>Division</label>
-              <div class="change-values">
-                <span class="old-value">{{
+                <span class="badge badge-division">{{
                   request.Archer.defaultDivision?.Name
                 }}</span>
-                <span class="arrow">→</span>
-                <span class="new-value">{{
-                  getDivisionName(request.DivisionID)
-                }}</span>
               </div>
             </div>
+            <div class="request-date">
+              <small>Submitted</small>
+              <span>{{ formatDate(request.CreatedAt) }}</span>
+            </div>
+          </div>
 
-            <div v-if="request.PasswordHash" class="change-item">
-              <label>Password</label>
-              <div class="change-values">
-                <span class="new-value">🔒 Password will be changed</span>
+          <div class="changes-section">
+            <h4>Requested Changes:</h4>
+            <div class="changes-grid">
+              <div v-if="request.FirstName" class="change-item">
+                <label>First Name</label>
+                <div class="change-values">
+                  <span class="old-value">{{ request.Archer.FirstName }}</span>
+                  <span class="arrow">→</span>
+                  <span class="new-value">{{ request.FirstName }}</span>
+                </div>
+              </div>
+
+              <div v-if="request.LastName" class="change-item">
+                <label>Last Name</label>
+                <div class="change-values">
+                  <span class="old-value">{{ request.Archer.LastName }}</span>
+                  <span class="arrow">→</span>
+                  <span class="new-value">{{ request.LastName }}</span>
+                </div>
+              </div>
+
+              <div v-if="request.Email" class="change-item">
+                <label>Email</label>
+                <div class="change-values">
+                  <span class="old-value">{{ request.Archer.Email }}</span>
+                  <span class="arrow">→</span>
+                  <span class="new-value">{{ request.Email }}</span>
+                </div>
+              </div>
+
+              <div v-if="request.DateOfBirth" class="change-item">
+                <label>Date of Birth</label>
+                <div class="change-values">
+                  <span class="old-value">{{
+                    formatDate(request.Archer.DateOfBirth)
+                  }}</span>
+                  <span class="arrow">→</span>
+                  <span class="new-value">{{
+                    formatDate(request.DateOfBirth)
+                  }}</span>
+                </div>
+              </div>
+
+              <div v-if="request.Gender" class="change-item">
+                <label>Gender</label>
+                <div class="change-values">
+                  <span class="old-value">{{ request.Archer.Gender }}</span>
+                  <span class="arrow">→</span>
+                  <span class="new-value">{{ request.Gender }}</span>
+                </div>
+              </div>
+
+              <div v-if="request.DivisionID" class="change-item">
+                <label>Division</label>
+                <div class="change-values">
+                  <span class="old-value">{{
+                    request.Archer.defaultDivision?.Name
+                  }}</span>
+                  <span class="arrow">→</span>
+                  <span class="new-value">{{
+                    getDivisionName(request.DivisionID)
+                  }}</span>
+                </div>
+              </div>
+
+              <div v-if="request.PasswordHash" class="change-item">
+                <label>Password</label>
+                <div class="change-values">
+                  <span class="new-value">🔒 Password will be changed</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="request-actions">
-          <button
-            @click="openRejectModal(request)"
-            class="btn-reject"
-            :disabled="processing"
-          >
-            Reject
-          </button>
-          <button
-            @click="approveRequest(request.RequestID)"
-            class="btn-approve"
-            :disabled="processing"
-          >
-            Approve Changes
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Reject Modal -->
-    <div v-if="showRejectModal" class="modal-overlay" @click="closeRejectModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h2>Reject Profile Update</h2>
-          <button class="close-btn" @click="closeRejectModal">×</button>
-        </div>
-
-        <form @submit.prevent="submitReject" class="modal-body">
-          <p style="color: #aaaaaa; margin-bottom: 1rem">
-            Rejecting update request from:
-            <strong style="color: #ffffff"
-              >{{ selectedRequest?.Archer.FirstName }}
-              {{ selectedRequest?.Archer.LastName }}</strong
+          <div class="request-actions">
+            <button
+              @click="openRejectModal(request)"
+              class="btn-reject"
+              :disabled="processing"
             >
-          </p>
-
-          <div class="form-group">
-            <label>Rejection Reason</label>
-            <textarea
-              v-model="rejectReason"
-              required
-              rows="4"
-              placeholder="Explain why this update request is being rejected..."
-            ></textarea>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" @click="closeRejectModal" class="btn-secondary">
-              Cancel
+              Reject
             </button>
-            <button type="submit" class="btn-reject" :disabled="processing">
-              {{ processing ? "Rejecting..." : "Confirm Rejection" }}
+            <button
+              @click="approveRequest(request.RequestID)"
+              class="btn-approve"
+              :disabled="processing"
+            >
+              Approve Changes
             </button>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
 
-    <!-- Loading State -->
-    <div v-if="loading" class="loading">Loading requests...</div>
-  </div>
+      <!-- Reject Modal -->
+      <div
+        v-if="showRejectModal"
+        class="modal-overlay"
+        @click="closeRejectModal"
+      >
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h2>Reject Profile Update</h2>
+            <button class="close-btn" @click="closeRejectModal">×</button>
+          </div>
+
+          <form @submit.prevent="submitReject" class="modal-body">
+            <p style="color: #aaaaaa; margin-bottom: 1rem">
+              Rejecting update request from:
+              <strong style="color: #ffffff"
+                >{{ selectedRequest?.Archer.FirstName }}
+                {{ selectedRequest?.Archer.LastName }}</strong
+              >
+            </p>
+
+            <div class="form-group">
+              <label>Rejection Reason</label>
+              <textarea
+                v-model="rejectReason"
+                required
+                rows="4"
+                placeholder="Explain why this update request is being rejected..."
+              ></textarea>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                @click="closeRejectModal"
+                class="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn-reject" :disabled="processing">
+                {{ processing ? "Rejecting..." : "Confirm Rejection" }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="loading">Loading requests...</div>
+    </div>
+  </main>
 </template>
 
 <script setup>
@@ -256,9 +268,12 @@ function closeRejectModal() {
 async function submitReject() {
   try {
     processing.value = true;
-    await api.post(`/archers/requests/${selectedRequest.value.RequestID}/reject`, {
-      reason: rejectReason.value,
-    });
+    await api.post(
+      `/archers/requests/${selectedRequest.value.RequestID}/reject`,
+      {
+        reason: rejectReason.value,
+      }
+    );
     alert("Profile update rejected");
     closeRejectModal();
     await loadRequests();
@@ -291,7 +306,8 @@ function formatDate(dateString) {
 
 <style scoped>
 .profile-requests {
-  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .header-section {
@@ -303,7 +319,7 @@ function formatDate(dateString) {
 
 .header-section h1 {
   margin: 0;
-  color: #ffffff;
+  color: #000000;
 }
 
 .stats {
@@ -326,22 +342,35 @@ function formatDate(dateString) {
   background: #1e1e1e;
   border: 1px solid #444;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .empty-icon {
   font-size: 4rem;
   margin-bottom: 1rem;
   color: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 50%;
 }
 
 .empty-state h3 {
   color: #ffffff;
   margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
 }
 
 .empty-state p {
   color: #aaaaaa;
   margin: 0;
+  font-size: 1rem;
 }
 
 .requests-list {
@@ -601,10 +630,10 @@ function formatDate(dateString) {
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  background: #2d2d2d;
+  background: #ffffff;
   border: 1px solid #444;
   border-radius: 4px;
-  color: #ffffff;
+  color: #000000;
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
@@ -616,7 +645,7 @@ function formatDate(dateString) {
 }
 
 .form-group textarea::placeholder {
-  color: #666;
+  color: #999;
 }
 
 .modal-footer {

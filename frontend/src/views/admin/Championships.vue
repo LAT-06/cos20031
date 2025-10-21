@@ -34,17 +34,29 @@
         </thead>
         <tbody>
           <tr v-for="champ in championships" :key="champ.ChampionshipID">
-            <td><strong>{{ champ.Name }}</strong></td>
+            <td>
+              <strong>{{ champ.Name }}</strong>
+            </td>
             <td>{{ champ.Year }}</td>
             <td>{{ formatDate(champ.StartDate) }}</td>
             <td>{{ formatDate(champ.EndDate) }}</td>
             <td>{{ champ.competitions?.length || 0 }} competition(s)</td>
             <td>
-              <button class="btn-small btn-info" @click="viewChampionship(champ)">View</button>
-              <button class="btn-small btn-warning" @click="editChampionship(champ)">Edit</button>
-              <button 
-                class="btn-small btn-danger" 
-                @click="deleteChampionship(champ)" 
+              <button
+                class="btn-small btn-info"
+                @click="viewChampionship(champ)"
+              >
+                View
+              </button>
+              <button
+                class="btn-small btn-warning"
+                @click="editChampionship(champ)"
+              >
+                Edit
+              </button>
+              <button
+                class="btn-small btn-danger"
+                @click="deleteChampionship(champ)"
                 v-if="authStore.isAdmin"
               >
                 Delete
@@ -52,7 +64,7 @@
             </td>
           </tr>
           <tr v-if="championships.length === 0">
-            <td colspan="6" style="text-align: center; padding: 40px;">
+            <td colspan="6" style="text-align: center; padding: 40px">
               No championships found
             </td>
           </tr>
@@ -85,31 +97,50 @@
               <label>End Date:</label>
               <span>{{ formatDate(selectedChampionship.EndDate) }}</span>
             </div>
-            <div class="detail-item" style="grid-column: 1 / -1;">
+            <div class="detail-item" style="grid-column: 1 / -1">
               <label>Description:</label>
-              <span>{{ selectedChampionship.Description || 'N/A' }}</span>
+              <span>{{ selectedChampionship.Description || "N/A" }}</span>
             </div>
           </div>
 
-          <div v-if="selectedChampionship.competitions && selectedChampionship.competitions.length > 0" class="competitions-section">
+          <div
+            v-if="
+              selectedChampionship.competitions &&
+              selectedChampionship.competitions.length > 0
+            "
+            class="competitions-section"
+          >
             <h3>Linked Competitions</h3>
             <div class="competition-list">
-              <div v-for="comp in selectedChampionship.competitions" :key="comp.CompetitionID" class="competition-card">
+              <div
+                v-for="comp in selectedChampionship.competitions"
+                :key="comp.CompetitionID"
+                class="competition-card"
+              >
                 <div class="comp-name">{{ comp.Name }}</div>
                 <div class="comp-details">
                   <span>{{ formatDate(comp.Date) }}</span>
                   <span class="separator">•</span>
-                  <span>{{ comp.Location || 'N/A' }}</span>
+                  <span>{{ comp.Location || "N/A" }}</span>
                   <span class="separator">•</span>
-                  <span :class="`badge badge-${comp.Status}`">{{ comp.Status }}</span>
+                  <span :class="`badge badge-${comp.Status}`">{{
+                    comp.Status
+                  }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeViewModal">Close</button>
-          <button class="btn btn-primary" @click="editChampionship(selectedChampionship)">Edit</button>
+          <button class="btn btn-secondary" @click="closeViewModal">
+            Close
+          </button>
+          <button
+            class="btn btn-primary"
+            @click="editChampionship(selectedChampionship)"
+          >
+            Edit
+          </button>
         </div>
       </div>
     </div>
@@ -118,7 +149,7 @@
     <div v-if="showFormModal" class="modal-overlay" @click="closeFormModal">
       <div class="modal-content large" @click.stop>
         <div class="modal-header">
-          <h2>{{ isEditMode ? 'Edit' : 'Add' }} Championship</h2>
+          <h2>{{ isEditMode ? "Edit" : "Add" }} Championship</h2>
           <button class="close-btn" @click="closeFormModal">&times;</button>
         </div>
         <div class="modal-body">
@@ -179,7 +210,11 @@
             <div class="form-group">
               <label>Link Competitions (Optional)</label>
               <div class="competitions-checkboxes">
-                <div v-for="comp in availableCompetitions" :key="comp.CompetitionID" class="checkbox-item">
+                <div
+                  v-for="comp in availableCompetitions"
+                  :key="comp.CompetitionID"
+                  class="checkbox-item"
+                >
                   <input
                     type="checkbox"
                     :id="`comp-${comp.CompetitionID}`"
@@ -190,7 +225,10 @@
                     {{ comp.Name }} ({{ formatDate(comp.Date) }})
                   </label>
                 </div>
-                <div v-if="availableCompetitions.length === 0" class="no-competitions">
+                <div
+                  v-if="availableCompetitions.length === 0"
+                  class="no-competitions"
+                >
                   No competitions available. Create competitions first.
                 </div>
               </div>
@@ -199,11 +237,21 @@
             <div v-if="formError" class="error-message">{{ formError }}</div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeFormModal">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="closeFormModal"
+              >
                 Cancel
               </button>
-              <button type="submit" class="btn btn-primary" :disabled="formLoading">
-                {{ formLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="formLoading"
+              >
+                {{
+                  formLoading ? "Saving..." : isEditMode ? "Update" : "Create"
+                }}
               </button>
             </div>
           </form>
@@ -214,17 +262,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import api from '@/services/api';
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import api from "@/services/api";
 
 const authStore = useAuthStore();
 
 const championships = ref([]);
 const availableCompetitions = ref([]);
 const loading = ref(false);
-const error = ref('');
-const searchTerm = ref('');
+const error = ref("");
+const searchTerm = ref("");
 
 // Modals
 const showViewModal = ref(false);
@@ -234,15 +282,15 @@ const isEditMode = ref(false);
 
 // Form
 const formData = ref({
-  name: '',
+  name: "",
   year: new Date().getFullYear(),
-  startDate: '',
-  endDate: '',
-  description: '',
-  competitionIds: []
+  startDate: "",
+  endDate: "",
+  description: "",
+  competitionIds: [],
 });
 const formLoading = ref(false);
-const formError = ref('');
+const formError = ref("");
 
 onMounted(() => {
   loadChampionships();
@@ -251,16 +299,16 @@ onMounted(() => {
 
 async function loadChampionships() {
   loading.value = true;
-  error.value = '';
+  error.value = "";
 
   try {
     const params = {};
     if (searchTerm.value) params.search = searchTerm.value;
 
-    const response = await api.get('/championships', { params });
+    const response = await api.get("/championships", { params });
     championships.value = response.data.championships;
   } catch (err) {
-    error.value = err.response?.data?.error || 'Failed to load championships';
+    error.value = err.response?.data?.error || "Failed to load championships";
   } finally {
     loading.value = false;
   }
@@ -268,10 +316,10 @@ async function loadChampionships() {
 
 async function loadCompetitions() {
   try {
-    const response = await api.get('/competitions');
+    const response = await api.get("/competitions");
     availableCompetitions.value = response.data.competitions;
   } catch (err) {
-    console.error('Failed to load competitions:', err);
+    console.error("Failed to load competitions:", err);
   }
 }
 
@@ -279,14 +327,14 @@ function openAddModal() {
   isEditMode.value = false;
   const now = new Date();
   formData.value = {
-    name: '',
+    name: "",
     year: now.getFullYear(),
-    startDate: now.toISOString().split('T')[0],
-    endDate: new Date(now.getFullYear(), 11, 31).toISOString().split('T')[0],
-    description: '',
-    competitionIds: []
+    startDate: now.toISOString().split("T")[0],
+    endDate: new Date(now.getFullYear(), 11, 31).toISOString().split("T")[0],
+    description: "",
+    competitionIds: [],
   };
-  formError.value = '';
+  formError.value = "";
   showFormModal.value = true;
 }
 
@@ -303,17 +351,17 @@ function editChampionship(champ) {
     year: champ.Year,
     startDate: champ.StartDate,
     endDate: champ.EndDate,
-    description: champ.Description || '',
-    competitionIds: champ.competitions?.map(c => c.CompetitionID) || []
+    description: champ.Description || "",
+    competitionIds: champ.competitions?.map((c) => c.CompetitionID) || [],
   };
-  formError.value = '';
+  formError.value = "";
   showViewModal.value = false;
   showFormModal.value = true;
 }
 
 async function saveChampionship() {
   formLoading.value = true;
-  formError.value = '';
+  formError.value = "";
 
   try {
     const payload = {
@@ -322,26 +370,35 @@ async function saveChampionship() {
       startDate: formData.value.startDate,
       endDate: formData.value.endDate,
       description: formData.value.description,
-      competitionIds: formData.value.competitionIds
+      competitionIds: formData.value.competitionIds,
     };
 
     if (isEditMode.value) {
-      await api.put(`/championships/${selectedChampionship.value.ChampionshipID}`, payload);
+      await api.put(
+        `/championships/${selectedChampionship.value.ChampionshipID}`,
+        payload
+      );
     } else {
-      await api.post('/championships', payload);
+      await api.post("/championships", payload);
     }
 
     await loadChampionships();
     closeFormModal();
   } catch (err) {
-    formError.value = err.response?.data?.error || `Failed to ${isEditMode.value ? 'update' : 'create'} championship`;
+    formError.value =
+      err.response?.data?.error ||
+      `Failed to ${isEditMode.value ? "update" : "create"} championship`;
   } finally {
     formLoading.value = false;
   }
 }
 
 async function deleteChampionship(champ) {
-  if (!confirm(`Are you sure you want to delete "${champ.Name}"?\n\nThis cannot be undone.`)) {
+  if (
+    !confirm(
+      `Are you sure you want to delete "${champ.Name}"?\n\nThis cannot be undone.`
+    )
+  ) {
     return;
   }
 
@@ -349,7 +406,7 @@ async function deleteChampionship(champ) {
     await api.delete(`/championships/${champ.ChampionshipID}`);
     await loadChampionships();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to delete championship');
+    alert(err.response?.data?.error || "Failed to delete championship");
   }
 }
 
@@ -361,15 +418,15 @@ function closeViewModal() {
 function closeFormModal() {
   showFormModal.value = false;
   selectedChampionship.value = null;
-  formError.value = '';
+  formError.value = "";
 }
 
 function formatDate(date) {
-  if (!date) return 'N/A';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+  if (!date) return "N/A";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }
 </script>

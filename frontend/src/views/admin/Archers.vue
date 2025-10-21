@@ -55,11 +55,15 @@
               }}</span>
             </td>
             <td>
-              <button class="btn-small btn-info" @click="viewArcher(archer)">View</button>
-              <button class="btn-small btn-warning" @click="editArcher(archer)">Edit</button>
-              <button 
-                class="btn-small btn-danger" 
-                @click="deleteArcher(archer)" 
+              <button class="btn-small btn-info" @click="viewArcher(archer)">
+                View
+              </button>
+              <button class="btn-small btn-warning" @click="editArcher(archer)">
+                Edit
+              </button>
+              <button
+                class="btn-small btn-danger"
+                @click="deleteArcher(archer)"
                 v-if="authStore.isAdmin"
                 title="Only admins can delete archers"
               >
@@ -68,7 +72,7 @@
             </td>
           </tr>
           <tr v-if="archers.length === 0">
-            <td colspan="7" style="text-align: center; padding: 40px;">
+            <td colspan="7" style="text-align: center; padding: 40px">
               No archers found
             </td>
           </tr>
@@ -87,7 +91,10 @@
           <div class="detail-grid">
             <div class="detail-item">
               <label>Full Name:</label>
-              <span>{{ selectedArcher.FirstName }} {{ selectedArcher.LastName }}</span>
+              <span
+                >{{ selectedArcher.FirstName }}
+                {{ selectedArcher.LastName }}</span
+              >
             </div>
             <div class="detail-item">
               <label>Email:</label>
@@ -103,15 +110,17 @@
             </div>
             <div class="detail-item">
               <label>Class:</label>
-              <span>{{ selectedArcher.class?.Name || 'N/A' }}</span>
+              <span>{{ selectedArcher.class?.Name || "N/A" }}</span>
             </div>
             <div class="detail-item">
               <label>Default Division:</label>
-              <span>{{ selectedArcher.defaultDivision?.Name || 'N/A' }}</span>
+              <span>{{ selectedArcher.defaultDivision?.Name || "N/A" }}</span>
             </div>
             <div class="detail-item">
               <label>Role:</label>
-              <span :class="`badge badge-${selectedArcher.Role}`">{{ selectedArcher.Role }}</span>
+              <span :class="`badge badge-${selectedArcher.Role}`">{{
+                selectedArcher.Role
+              }}</span>
             </div>
             <div class="detail-item">
               <label>Archer ID:</label>
@@ -120,8 +129,12 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeViewModal">Close</button>
-          <button class="btn btn-primary" @click="editArcher(selectedArcher)">Edit</button>
+          <button class="btn btn-secondary" @click="closeViewModal">
+            Close
+          </button>
+          <button class="btn btn-primary" @click="editArcher(selectedArcher)">
+            Edit
+          </button>
         </div>
       </div>
     </div>
@@ -130,7 +143,7 @@
     <div v-if="showFormModal" class="modal-overlay" @click="closeFormModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>{{ isEditMode ? 'Edit' : 'Add' }} Archer</h2>
+          <h2>{{ isEditMode ? "Edit" : "Add" }} Archer</h2>
           <button class="close-btn" @click="closeFormModal">&times;</button>
         </div>
         <div class="modal-body">
@@ -195,18 +208,27 @@
                 <label for="role">Role *</label>
                 <select id="role" v-model="formData.role" required>
                   <option value="archer">Archer</option>
-                  <option value="recorder" v-if="authStore.isAdmin">Recorder</option>
+                  <option value="recorder" v-if="authStore.isAdmin">
+                    Recorder
+                  </option>
                   <option value="admin" v-if="authStore.isAdmin">Admin</option>
                 </select>
-                <small v-if="!authStore.isAdmin" style="color: #aaaaaa;">
+                <small v-if="!authStore.isAdmin" style="color: #aaaaaa">
                   Only admins can assign recorder/admin roles
                 </small>
               </div>
               <div class="form-group">
                 <label for="defaultDivisionId">Default Division</label>
-                <select id="defaultDivisionId" v-model="formData.defaultDivisionId">
+                <select
+                  id="defaultDivisionId"
+                  v-model="formData.defaultDivisionId"
+                >
                   <option value="">None</option>
-                  <option v-for="division in divisions" :key="division.DivisionID" :value="division.DivisionID">
+                  <option
+                    v-for="division in divisions"
+                    :key="division.DivisionID"
+                    :value="division.DivisionID"
+                  >
                     {{ division.Name }}
                   </option>
                 </select>
@@ -245,11 +267,21 @@
             <div v-if="formError" class="error-message">{{ formError }}</div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeFormModal">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="closeFormModal"
+              >
                 Cancel
               </button>
-              <button type="submit" class="btn btn-primary" :disabled="formLoading">
-                {{ formLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="formLoading"
+              >
+                {{
+                  formLoading ? "Saving..." : isEditMode ? "Update" : "Create"
+                }}
               </button>
             </div>
           </form>
@@ -281,17 +313,17 @@ const isEditMode = ref(false);
 
 // Form
 const formData = ref({
-  firstName: '',
-  lastName: '',
-  email: '',
-  dateOfBirth: '',
-  gender: '',
-  role: 'archer',
-  defaultDivisionId: '',
-  password: ''
+  firstName: "",
+  lastName: "",
+  email: "",
+  dateOfBirth: "",
+  gender: "",
+  role: "archer",
+  defaultDivisionId: "",
+  password: "",
 });
 const formLoading = ref(false);
-const formError = ref('');
+const formError = ref("");
 
 onMounted(() => {
   loadArchers();
@@ -307,7 +339,7 @@ async function loadArchers() {
     if (searchTerm.value) params.search = searchTerm.value;
     if (filterRole.value) params.role = filterRole.value;
 
-    const response = await api.get('/archers', { params });
+    const response = await api.get("/archers", { params });
     archers.value = response.data.archers;
   } catch (err) {
     error.value = err.response?.data?.error || "Failed to load archers";
@@ -318,26 +350,26 @@ async function loadArchers() {
 
 async function loadDivisions() {
   try {
-    const response = await api.get('/metadata/divisions');
+    const response = await api.get("/metadata/divisions");
     divisions.value = response.data.divisions;
   } catch (err) {
-    console.error('Failed to load divisions:', err);
+    console.error("Failed to load divisions:", err);
   }
 }
 
 function openAddModal() {
   isEditMode.value = false;
   formData.value = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    dateOfBirth: '',
-    gender: '',
-    role: 'archer',
-    defaultDivisionId: '',
-    password: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    dateOfBirth: "",
+    gender: "",
+    role: "archer",
+    defaultDivisionId: "",
+    password: "",
   };
-  formError.value = '';
+  formError.value = "";
   showFormModal.value = true;
 }
 
@@ -356,17 +388,17 @@ function editArcher(archer) {
     dateOfBirth: archer.DateOfBirth,
     gender: archer.Gender,
     role: archer.Role,
-    defaultDivisionId: archer.DefaultDivisionID || '',
-    password: ''
+    defaultDivisionId: archer.DefaultDivisionID || "",
+    password: "",
   };
-  formError.value = '';
+  formError.value = "";
   showViewModal.value = false;
   showFormModal.value = true;
 }
 
 async function saveArcher() {
   formLoading.value = true;
-  formError.value = '';
+  formError.value = "";
 
   try {
     const payload = {
@@ -386,13 +418,15 @@ async function saveArcher() {
     if (isEditMode.value) {
       await api.put(`/archers/${selectedArcher.value.ArcherID}`, payload);
     } else {
-      await api.post('/archers', payload);
+      await api.post("/archers", payload);
     }
 
     await loadArchers();
     closeFormModal();
   } catch (err) {
-    formError.value = err.response?.data?.error || `Failed to ${isEditMode.value ? 'update' : 'create'} archer`;
+    formError.value =
+      err.response?.data?.error ||
+      `Failed to ${isEditMode.value ? "update" : "create"} archer`;
   } finally {
     formLoading.value = false;
   }
@@ -423,15 +457,15 @@ function closeViewModal() {
 function closeFormModal() {
   showFormModal.value = false;
   selectedArcher.value = null;
-  formError.value = '';
+  formError.value = "";
 }
 
 function formatDate(date) {
-  if (!date) return 'N/A';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  if (!date) return "N/A";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 </script>
@@ -566,6 +600,47 @@ function formatDate(date) {
 
 .btn-danger:hover {
   background: #c82333;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #000000;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.form-group input:disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 4px;
+  color: #aaaaaa;
+  font-size: 12px;
 }
 
 @media (max-width: 768px) {

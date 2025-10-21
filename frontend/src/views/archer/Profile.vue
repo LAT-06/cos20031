@@ -10,13 +10,17 @@
     <!-- Profile Display -->
     <div class="profile-card" v-if="archer">
       <div class="profile-header">
-        <div class="avatar">{{ archer.FirstName[0] }}{{ archer.LastName[0] }}</div>
+        <div class="avatar">
+          {{ archer.FirstName[0] }}{{ archer.LastName[0] }}
+        </div>
         <div class="profile-info">
           <h2>{{ archer.FirstName }} {{ archer.LastName }}</h2>
           <p class="email">{{ archer.Email }}</p>
           <div class="badges">
             <span class="badge badge-class">{{ archer.class?.ClassName }}</span>
-            <span class="badge badge-division">{{ archer.defaultDivision?.Name }}</span>
+            <span class="badge badge-division">{{
+              archer.defaultDivision?.Name
+            }}</span>
           </div>
         </div>
       </div>
@@ -40,7 +44,10 @@
         </div>
         <div class="detail-row">
           <label>Category</label>
-          <span>{{ archer.class?.ClassName }} - {{ archer.defaultDivision?.Name }}</span>
+          <span
+            >{{ archer.class?.ClassName }} -
+            {{ archer.defaultDivision?.Name }}</span
+          >
         </div>
         <div class="detail-row">
           <label>Member Since</label>
@@ -216,7 +223,9 @@ async function loadDivisions() {
 async function checkPendingChanges() {
   try {
     // Check if there are any pending profile update requests
-    const response = await api.get(`/archers/${user.value.archerId}/pending-changes`);
+    const response = await api.get(
+      `/archers/${user.value.archerId}/pending-changes`
+    );
     hasPendingChanges.value = response.data.hasPending;
   } catch (error) {
     // Endpoint might not exist yet, that's ok
@@ -280,7 +289,8 @@ async function submitEdit() {
   } catch (error) {
     console.error("Failed to update profile:", error);
     alert(
-      error.response?.data?.message || "Failed to update profile. Please try again."
+      error.response?.data?.message ||
+        "Failed to update profile. Please try again."
     );
   } finally {
     loading.value = false;
@@ -525,10 +535,10 @@ function formatDate(dateString) {
 .form-group input,
 .form-group select {
   padding: 0.75rem;
-  background: #2d2d2d;
+  background: #ffffff;
   border: 1px solid #444;
   border-radius: 4px;
-  color: #ffffff;
+  color: #000000;
   font-size: 1rem;
 }
 
@@ -539,7 +549,7 @@ function formatDate(dateString) {
 }
 
 .form-group input::placeholder {
-  color: #666;
+  color: #999;
 }
 
 .info-box {

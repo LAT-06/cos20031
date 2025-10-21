@@ -32,15 +32,21 @@
         </thead>
         <tbody>
           <tr v-for="round in rounds" :key="round.RoundID">
-            <td><strong>{{ round.Name }}</strong></td>
-            <td>{{ round.Description || 'N/A' }}</td>
+            <td>
+              <strong>{{ round.Name }}</strong>
+            </td>
+            <td>{{ round.Description || "N/A" }}</td>
             <td>{{ round.ranges?.length || 0 }} range(s)</td>
             <td>
-              <button class="btn-small btn-info" @click="viewRound(round)">View</button>
-              <button class="btn-small btn-warning" @click="editRound(round)">Edit</button>
-              <button 
-                class="btn-small btn-danger" 
-                @click="deleteRound(round)" 
+              <button class="btn-small btn-info" @click="viewRound(round)">
+                View
+              </button>
+              <button class="btn-small btn-warning" @click="editRound(round)">
+                Edit
+              </button>
+              <button
+                class="btn-small btn-danger"
+                @click="deleteRound(round)"
                 v-if="authStore.isAdmin"
               >
                 Delete
@@ -48,7 +54,7 @@
             </td>
           </tr>
           <tr v-if="rounds.length === 0">
-            <td colspan="4" style="text-align: center; padding: 40px;">
+            <td colspan="4" style="text-align: center; padding: 40px">
               No rounds found
             </td>
           </tr>
@@ -70,27 +76,48 @@
           </div>
           <div class="detail-item" style="margin-top: 16px">
             <label>Description:</label>
-            <span>{{ selectedRound.Description || 'N/A' }}</span>
+            <span>{{ selectedRound.Description || "N/A" }}</span>
           </div>
 
-          <div v-if="selectedRound.ranges && selectedRound.ranges.length > 0" class="ranges-section">
+          <div
+            v-if="selectedRound.ranges && selectedRound.ranges.length > 0"
+            class="ranges-section"
+          >
             <h3>Ranges Configuration</h3>
-            <div v-for="(range, index) in selectedRound.ranges" :key="range.RoundRangeID" class="range-card">
+            <div
+              v-for="(range, index) in selectedRound.ranges"
+              :key="range.RoundRangeID"
+              class="range-card"
+            >
               <h4>Range {{ index + 1 }}</h4>
               <div class="range-details">
-                <div><strong>Distance:</strong> {{ range.Distance }} {{ range.Unit }}</div>
-                <div><strong>Target Size:</strong> {{ range.TargetSize }}cm</div>
+                <div>
+                  <strong>Distance:</strong> {{ range.Distance }}
+                  {{ range.Unit }}
+                </div>
+                <div>
+                  <strong>Target Size:</strong> {{ range.TargetSize }}cm
+                </div>
                 <div><strong>Scoring:</strong> {{ range.ScoringType }}</div>
                 <div><strong>Ends:</strong> {{ range.NumEnds }}</div>
-                <div><strong>Arrows per End:</strong> {{ range.ArrowsPerEnd }}</div>
-                <div><strong>Total Arrows:</strong> {{ range.NumEnds * range.ArrowsPerEnd }}</div>
+                <div>
+                  <strong>Arrows per End:</strong> {{ range.ArrowsPerEnd }}
+                </div>
+                <div>
+                  <strong>Total Arrows:</strong>
+                  {{ range.NumEnds * range.ArrowsPerEnd }}
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeViewModal">Close</button>
-          <button class="btn btn-primary" @click="editRound(selectedRound)">Edit</button>
+          <button class="btn btn-secondary" @click="closeViewModal">
+            Close
+          </button>
+          <button class="btn btn-primary" @click="editRound(selectedRound)">
+            Edit
+          </button>
         </div>
       </div>
     </div>
@@ -99,7 +126,7 @@
     <div v-if="showFormModal" class="modal-overlay" @click="closeFormModal">
       <div class="modal-content large" @click.stop>
         <div class="modal-header">
-          <h2>{{ isEditMode ? 'Edit' : 'Add' }} Round</h2>
+          <h2>{{ isEditMode ? "Edit" : "Add" }} Round</h2>
           <button class="close-btn" @click="closeFormModal">&times;</button>
         </div>
         <div class="modal-body">
@@ -128,13 +155,24 @@
             <div class="ranges-form-section">
               <div class="section-header">
                 <h3>Ranges Configuration</h3>
-                <button type="button" class="btn btn-small" @click="addRange">+ Add Range</button>
+                <button type="button" class="btn btn-small" @click="addRange">
+                  + Add Range
+                </button>
               </div>
 
-              <div v-for="(range, index) in formData.ranges" :key="index" class="range-form-card">
+              <div
+                v-for="(range, index) in formData.ranges"
+                :key="index"
+                class="range-form-card"
+              >
                 <div class="range-header">
                   <h4>Range {{ index + 1 }}</h4>
-                  <button type="button" class="btn-icon" @click="removeRange(index)" v-if="formData.ranges.length > 1">
+                  <button
+                    type="button"
+                    class="btn-icon"
+                    @click="removeRange(index)"
+                    v-if="formData.ranges.length > 1"
+                  >
                     &times;
                   </button>
                 </div>
@@ -142,7 +180,12 @@
                 <div class="form-row">
                   <div class="form-group">
                     <label>Distance *</label>
-                    <input v-model.number="range.distance" type="number" required min="1" />
+                    <input
+                      v-model.number="range.distance"
+                      type="number"
+                      required
+                      min="1"
+                    />
                   </div>
                   <div class="form-group">
                     <label>Unit *</label>
@@ -153,7 +196,12 @@
                   </div>
                   <div class="form-group">
                     <label>Target Size (cm) *</label>
-                    <input v-model.number="range.targetSize" type="number" required min="1" />
+                    <input
+                      v-model.number="range.targetSize"
+                      type="number"
+                      required
+                      min="1"
+                    />
                   </div>
                 </div>
 
@@ -169,11 +217,22 @@
                   </div>
                   <div class="form-group">
                     <label>Number of Ends *</label>
-                    <input v-model.number="range.numEnds" type="number" required min="1" />
+                    <input
+                      v-model.number="range.numEnds"
+                      type="number"
+                      required
+                      min="1"
+                    />
                   </div>
                   <div class="form-group">
                     <label>Arrows per End *</label>
-                    <input v-model.number="range.arrowsPerEnd" type="number" required min="1" max="12" />
+                    <input
+                      v-model.number="range.arrowsPerEnd"
+                      type="number"
+                      required
+                      min="1"
+                      max="12"
+                    />
                   </div>
                 </div>
               </div>
@@ -182,11 +241,21 @@
             <div v-if="formError" class="error-message">{{ formError }}</div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeFormModal">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="closeFormModal"
+              >
                 Cancel
               </button>
-              <button type="submit" class="btn btn-primary" :disabled="formLoading">
-                {{ formLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="formLoading"
+              >
+                {{
+                  formLoading ? "Saving..." : isEditMode ? "Update" : "Create"
+                }}
               </button>
             </div>
           </form>
@@ -197,16 +266,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import api from '@/services/api';
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import api from "@/services/api";
 
 const authStore = useAuthStore();
 
 const rounds = ref([]);
 const loading = ref(false);
-const error = ref('');
-const searchTerm = ref('');
+const error = ref("");
+const searchTerm = ref("");
 
 // Modals
 const showViewModal = ref(false);
@@ -216,19 +285,21 @@ const isEditMode = ref(false);
 
 // Form
 const formData = ref({
-  name: '',
-  description: '',
-  ranges: [{
-    distance: 70,
-    unit: 'meters',
-    targetSize: 122,
-    scoringType: '10-zone',
-    numEnds: 12,
-    arrowsPerEnd: 6
-  }]
+  name: "",
+  description: "",
+  ranges: [
+    {
+      distance: 70,
+      unit: "meters",
+      targetSize: 122,
+      scoringType: "10-zone",
+      numEnds: 12,
+      arrowsPerEnd: 6,
+    },
+  ],
 });
 const formLoading = ref(false);
-const formError = ref('');
+const formError = ref("");
 
 onMounted(() => {
   loadRounds();
@@ -236,16 +307,16 @@ onMounted(() => {
 
 async function loadRounds() {
   loading.value = true;
-  error.value = '';
+  error.value = "";
 
   try {
     const params = {};
     if (searchTerm.value) params.search = searchTerm.value;
 
-    const response = await api.get('/rounds', { params });
+    const response = await api.get("/rounds", { params });
     rounds.value = response.data.rounds;
   } catch (err) {
-    error.value = err.response?.data?.error || 'Failed to load rounds';
+    error.value = err.response?.data?.error || "Failed to load rounds";
   } finally {
     loading.value = false;
   }
@@ -254,18 +325,20 @@ async function loadRounds() {
 function openAddModal() {
   isEditMode.value = false;
   formData.value = {
-    name: '',
-    description: '',
-    ranges: [{
-      distance: 70,
-      unit: 'meters',
-      targetSize: 122,
-      scoringType: '10-zone',
-      numEnds: 12,
-      arrowsPerEnd: 6
-    }]
+    name: "",
+    description: "",
+    ranges: [
+      {
+        distance: 70,
+        unit: "meters",
+        targetSize: 122,
+        scoringType: "10-zone",
+        numEnds: 12,
+        arrowsPerEnd: 6,
+      },
+    ],
   };
-  formError.value = '';
+  formError.value = "";
   showFormModal.value = true;
 }
 
@@ -279,63 +352,71 @@ function editRound(round) {
   selectedRound.value = round;
   formData.value = {
     name: round.Name,
-    description: round.Description || '',
-    ranges: round.ranges?.map(r => ({
+    description: round.Description || "",
+    ranges: round.ranges?.map((r) => ({
       distance: r.Distance,
       unit: r.Unit,
       targetSize: r.TargetSize,
       scoringType: r.ScoringType,
       numEnds: r.NumEnds,
-      arrowsPerEnd: r.ArrowsPerEnd
-    })) || [{
-      distance: 70,
-      unit: 'meters',
-      targetSize: 122,
-      scoringType: '10-zone',
-      numEnds: 12,
-      arrowsPerEnd: 6
-    }]
+      arrowsPerEnd: r.ArrowsPerEnd,
+    })) || [
+      {
+        distance: 70,
+        unit: "meters",
+        targetSize: 122,
+        scoringType: "10-zone",
+        numEnds: 12,
+        arrowsPerEnd: 6,
+      },
+    ],
   };
-  formError.value = '';
+  formError.value = "";
   showViewModal.value = false;
   showFormModal.value = true;
 }
 
 async function saveRound() {
   formLoading.value = true;
-  formError.value = '';
+  formError.value = "";
 
   try {
     const payload = {
       name: formData.value.name,
       description: formData.value.description,
-      ranges: formData.value.ranges.map(r => ({
+      ranges: formData.value.ranges.map((r) => ({
         distance: r.distance,
         unit: r.unit,
         targetSize: r.targetSize,
         scoringType: r.scoringType,
         numEnds: r.numEnds,
-        arrowsPerEnd: r.arrowsPerEnd
-      }))
+        arrowsPerEnd: r.arrowsPerEnd,
+      })),
     };
 
     if (isEditMode.value) {
       await api.put(`/rounds/${selectedRound.value.RoundID}`, payload);
     } else {
-      await api.post('/rounds', payload);
+      await api.post("/rounds", payload);
     }
 
     await loadRounds();
     closeFormModal();
   } catch (err) {
-    formError.value = err.response?.data?.error || `Failed to ${isEditMode.value ? 'update' : 'create'} round`;
+    formError.value =
+      err.response?.data?.error ||
+      `Failed to ${isEditMode.value ? "update" : "create"} round`;
   } finally {
     formLoading.value = false;
   }
 }
 
 async function deleteRound(round) {
-  if (!confirm(`Are you sure you want to delete the round "${round.Name}"?\n\nThis cannot be undone.`)) {
+  if (
+    !confirm(
+      `Are you sure you want to delete the round "${round.Name}"?\n\nThis cannot be undone.`
+    )
+  ) {
     return;
   }
 
@@ -343,18 +424,18 @@ async function deleteRound(round) {
     await api.delete(`/rounds/${round.RoundID}`);
     await loadRounds();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to delete round');
+    alert(err.response?.data?.error || "Failed to delete round");
   }
 }
 
 function addRange() {
   formData.value.ranges.push({
     distance: 70,
-    unit: 'meters',
+    unit: "meters",
     targetSize: 122,
-    scoringType: '10-zone',
+    scoringType: "10-zone",
     numEnds: 12,
-    arrowsPerEnd: 6
+    arrowsPerEnd: 6,
   });
 }
 
@@ -370,7 +451,7 @@ function closeViewModal() {
 function closeFormModal() {
   showFormModal.value = false;
   selectedRound.value = null;
-  formError.value = '';
+  formError.value = "";
 }
 </script>
 

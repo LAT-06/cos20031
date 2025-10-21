@@ -34,21 +34,30 @@
         </thead>
         <tbody>
           <tr v-for="comp in competitions" :key="comp.CompetitionID">
-            <td><strong>{{ comp.Name }}</strong></td>
+            <td>
+              <strong>{{ comp.Name }}</strong>
+            </td>
             <td>{{ formatDate(comp.Date) }}</td>
-            <td>{{ comp.Location || 'N/A' }}</td>
-            <td>{{ comp.round?.Name || 'N/A' }}</td>
+            <td>{{ comp.Location || "N/A" }}</td>
+            <td>{{ comp.round?.Name || "N/A" }}</td>
             <td>
               <span :class="`badge badge-${comp.Status}`">
                 {{ comp.Status }}
               </span>
             </td>
             <td>
-              <button class="btn-small btn-info" @click="viewCompetition(comp)">View</button>
-              <button class="btn-small btn-warning" @click="editCompetition(comp)">Edit</button>
-              <button 
-                class="btn-small btn-danger" 
-                @click="deleteCompetition(comp)" 
+              <button class="btn-small btn-info" @click="viewCompetition(comp)">
+                View
+              </button>
+              <button
+                class="btn-small btn-warning"
+                @click="editCompetition(comp)"
+              >
+                Edit
+              </button>
+              <button
+                class="btn-small btn-danger"
+                @click="deleteCompetition(comp)"
                 v-if="authStore.isAdmin"
               >
                 Delete
@@ -56,7 +65,7 @@
             </td>
           </tr>
           <tr v-if="competitions.length === 0">
-            <td colspan="6" style="text-align: center; padding: 40px;">
+            <td colspan="6" style="text-align: center; padding: 40px">
               No competitions found
             </td>
           </tr>
@@ -83,11 +92,11 @@
             </div>
             <div class="detail-item">
               <label>Location:</label>
-              <span>{{ selectedCompetition.Location || 'N/A' }}</span>
+              <span>{{ selectedCompetition.Location || "N/A" }}</span>
             </div>
             <div class="detail-item">
               <label>Round:</label>
-              <span>{{ selectedCompetition.round?.Name || 'N/A' }}</span>
+              <span>{{ selectedCompetition.round?.Name || "N/A" }}</span>
             </div>
             <div class="detail-item">
               <label>Status:</label>
@@ -95,15 +104,22 @@
                 {{ selectedCompetition.Status }}
               </span>
             </div>
-            <div class="detail-item" style="grid-column: 1 / -1;">
+            <div class="detail-item" style="grid-column: 1 / -1">
               <label>Description:</label>
-              <span>{{ selectedCompetition.Description || 'N/A' }}</span>
+              <span>{{ selectedCompetition.Description || "N/A" }}</span>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" @click="closeViewModal">Close</button>
-          <button class="btn btn-primary" @click="editCompetition(selectedCompetition)">Edit</button>
+          <button class="btn btn-secondary" @click="closeViewModal">
+            Close
+          </button>
+          <button
+            class="btn btn-primary"
+            @click="editCompetition(selectedCompetition)"
+          >
+            Edit
+          </button>
         </div>
       </div>
     </div>
@@ -112,7 +128,7 @@
     <div v-if="showFormModal" class="modal-overlay" @click="closeFormModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>{{ isEditMode ? 'Edit' : 'Add' }} Competition</h2>
+          <h2>{{ isEditMode ? "Edit" : "Add" }} Competition</h2>
           <button class="close-btn" @click="closeFormModal">&times;</button>
         </div>
         <div class="modal-body">
@@ -131,12 +147,7 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="date">Date *</label>
-                <input
-                  id="date"
-                  v-model="formData.date"
-                  type="date"
-                  required
-                />
+                <input id="date" v-model="formData.date" type="date" required />
               </div>
               <div class="form-group">
                 <label for="status">Status *</label>
@@ -163,7 +174,11 @@
               <label for="roundId">Round *</label>
               <select id="roundId" v-model="formData.roundId" required>
                 <option value="">Select a round</option>
-                <option v-for="round in rounds" :key="round.RoundID" :value="round.RoundID">
+                <option
+                  v-for="round in rounds"
+                  :key="round.RoundID"
+                  :value="round.RoundID"
+                >
                   {{ round.Name }}
                 </option>
               </select>
@@ -182,11 +197,21 @@
             <div v-if="formError" class="error-message">{{ formError }}</div>
 
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeFormModal">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="closeFormModal"
+              >
                 Cancel
               </button>
-              <button type="submit" class="btn btn-primary" :disabled="formLoading">
-                {{ formLoading ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="formLoading"
+              >
+                {{
+                  formLoading ? "Saving..." : isEditMode ? "Update" : "Create"
+                }}
               </button>
             </div>
           </form>
@@ -197,17 +222,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import api from '@/services/api';
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import api from "@/services/api";
 
 const authStore = useAuthStore();
 
 const competitions = ref([]);
 const rounds = ref([]);
 const loading = ref(false);
-const error = ref('');
-const searchTerm = ref('');
+const error = ref("");
+const searchTerm = ref("");
 
 // Modals
 const showViewModal = ref(false);
@@ -217,15 +242,15 @@ const isEditMode = ref(false);
 
 // Form
 const formData = ref({
-  name: '',
-  date: '',
-  location: '',
-  roundId: '',
-  status: 'upcoming',
-  description: ''
+  name: "",
+  date: "",
+  location: "",
+  roundId: "",
+  status: "upcoming",
+  description: "",
 });
 const formLoading = ref(false);
-const formError = ref('');
+const formError = ref("");
 
 onMounted(() => {
   loadCompetitions();
@@ -234,16 +259,16 @@ onMounted(() => {
 
 async function loadCompetitions() {
   loading.value = true;
-  error.value = '';
+  error.value = "";
 
   try {
     const params = {};
     if (searchTerm.value) params.search = searchTerm.value;
 
-    const response = await api.get('/competitions', { params });
+    const response = await api.get("/competitions", { params });
     competitions.value = response.data.competitions;
   } catch (err) {
-    error.value = err.response?.data?.error || 'Failed to load competitions';
+    error.value = err.response?.data?.error || "Failed to load competitions";
   } finally {
     loading.value = false;
   }
@@ -251,24 +276,24 @@ async function loadCompetitions() {
 
 async function loadRounds() {
   try {
-    const response = await api.get('/rounds');
+    const response = await api.get("/rounds");
     rounds.value = response.data.rounds;
   } catch (err) {
-    console.error('Failed to load rounds:', err);
+    console.error("Failed to load rounds:", err);
   }
 }
 
 function openAddModal() {
   isEditMode.value = false;
   formData.value = {
-    name: '',
-    date: new Date().toISOString().split('T')[0],
-    location: '',
-    roundId: '',
-    status: 'upcoming',
-    description: ''
+    name: "",
+    date: new Date().toISOString().split("T")[0],
+    location: "",
+    roundId: "",
+    status: "upcoming",
+    description: "",
   };
-  formError.value = '';
+  formError.value = "";
   showFormModal.value = true;
 }
 
@@ -283,19 +308,19 @@ function editCompetition(comp) {
   formData.value = {
     name: comp.Name,
     date: comp.Date,
-    location: comp.Location || '',
+    location: comp.Location || "",
     roundId: comp.RoundID,
     status: comp.Status,
-    description: comp.Description || ''
+    description: comp.Description || "",
   };
-  formError.value = '';
+  formError.value = "";
   showViewModal.value = false;
   showFormModal.value = true;
 }
 
 async function saveCompetition() {
   formLoading.value = true;
-  formError.value = '';
+  formError.value = "";
 
   try {
     const payload = {
@@ -304,26 +329,35 @@ async function saveCompetition() {
       location: formData.value.location,
       roundId: formData.value.roundId,
       status: formData.value.status,
-      description: formData.value.description
+      description: formData.value.description,
     };
 
     if (isEditMode.value) {
-      await api.put(`/competitions/${selectedCompetition.value.CompetitionID}`, payload);
+      await api.put(
+        `/competitions/${selectedCompetition.value.CompetitionID}`,
+        payload
+      );
     } else {
-      await api.post('/competitions', payload);
+      await api.post("/competitions", payload);
     }
 
     await loadCompetitions();
     closeFormModal();
   } catch (err) {
-    formError.value = err.response?.data?.error || `Failed to ${isEditMode.value ? 'update' : 'create'} competition`;
+    formError.value =
+      err.response?.data?.error ||
+      `Failed to ${isEditMode.value ? "update" : "create"} competition`;
   } finally {
     formLoading.value = false;
   }
 }
 
 async function deleteCompetition(comp) {
-  if (!confirm(`Are you sure you want to delete "${comp.Name}"?\n\nThis cannot be undone.`)) {
+  if (
+    !confirm(
+      `Are you sure you want to delete "${comp.Name}"?\n\nThis cannot be undone.`
+    )
+  ) {
     return;
   }
 
@@ -331,7 +365,7 @@ async function deleteCompetition(comp) {
     await api.delete(`/competitions/${comp.CompetitionID}`);
     await loadCompetitions();
   } catch (err) {
-    alert(err.response?.data?.error || 'Failed to delete competition');
+    alert(err.response?.data?.error || "Failed to delete competition");
   }
 }
 
@@ -343,15 +377,15 @@ function closeViewModal() {
 function closeFormModal() {
   showFormModal.value = false;
   selectedCompetition.value = null;
-  formError.value = '';
+  formError.value = "";
 }
 
 function formatDate(date) {
-  if (!date) return 'N/A';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  if (!date) return "N/A";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 </script>

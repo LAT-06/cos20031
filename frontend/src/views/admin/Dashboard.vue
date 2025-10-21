@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard">
-    <h1>{{ authStore.isAdmin ? 'Admin' : 'Recorder' }} Dashboard</h1>
-    <p style="color: var(--muted-text); margin-top: -12px;">
-      Welcome back, {{ authStore.user?.firstName }}! 
-      <span v-if="!authStore.isAdmin" style="font-style: italic;">
+    <h1>{{ authStore.isAdmin ? "Admin" : "Recorder" }} Dashboard</h1>
+    <p style="color: var(--muted-text); margin-top: -12px">
+      Welcome back, {{ authStore.user?.firstName }}!
+      <span v-if="!authStore.isAdmin" style="font-style: italic">
         (Score Recorder)
       </span>
     </p>

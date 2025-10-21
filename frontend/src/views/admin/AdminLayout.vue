@@ -2,7 +2,7 @@
   <div class="app-root">
     <header>
       <div class="header-title">
-        <h1>{{ authStore.isAdmin ? 'Admin' : 'Recorder' }} Panel</h1>
+        <h1>{{ authStore.isAdmin ? "Admin" : "Recorder" }} Panel</h1>
         <span class="role-badge" :class="`badge-${user?.role}`">
           {{ user?.role }}
         </span>
@@ -20,7 +20,9 @@
             <router-link to="/admin/championships">Championships</router-link>
           </li>
           <li>
-            <router-link to="/admin/profile-requests">Profile Requests</router-link>
+            <router-link to="/admin/profile-requests"
+              >Profile Requests</router-link
+            >
           </li>
         </ul>
       </nav>

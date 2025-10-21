@@ -373,7 +373,7 @@ async function approveScore(score) {
   }
 
   try {
-    await api.put(`/scores/${score.ScoreRecordID}/approve`);
+    await api.post(`/scores/${score.ScoreRecordID}/approve`);
     await loadScores();
     closeViewModal();
   } catch (err) {
@@ -386,7 +386,7 @@ async function rejectScore(score) {
   if (reason === null) return; // User cancelled
 
   try {
-    await api.put(`/scores/${score.ScoreRecordID}/reject`, { reason });
+    await api.post(`/scores/${score.ScoreRecordID}/reject`, { reason });
     await loadScores();
     closeViewModal();
   } catch (err) {

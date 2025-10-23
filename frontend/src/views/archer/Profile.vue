@@ -54,15 +54,6 @@
           <span>{{ formatDate(archer.createdAt) }}</span>
         </div>
       </div>
-
-      <!-- Pending Changes Notice -->
-      <div v-if="hasPendingChanges" class="pending-notice">
-        <i class="icon">⏳</i>
-        <div>
-          <strong>Profile Update Pending</strong>
-          <p>Your profile changes are waiting for recorder approval.</p>
-        </div>
-      </div>
     </div>
 
     <!-- Edit Modal -->
@@ -180,7 +171,6 @@ const archer = ref(null);
 const divisions = ref([]);
 const showEditModal = ref(false);
 const loading = ref(false);
-const hasPendingChanges = ref(false);
 
 const editForm = ref({
   FirstName: "",
@@ -195,7 +185,6 @@ const editForm = ref({
 onMounted(async () => {
   await loadProfile();
   await loadDivisions();
-  await checkPendingChanges();
 });
 
 async function loadProfile() {
@@ -217,19 +206,6 @@ async function loadDivisions() {
     divisions.value = response.data.divisions;
   } catch (error) {
     console.error("Failed to load divisions:", error);
-  }
-}
-
-async function checkPendingChanges() {
-  try {
-    // Check if there are any pending profile update requests
-    const response = await api.get(
-      `/archers/${user.value.archerId}/pending-changes`
-    );
-    hasPendingChanges.value = response.data.hasPending;
-  } catch (error) {
-    // Endpoint might not exist yet, that's ok
-    hasPendingChanges.value = false;
   }
 }
 
@@ -279,17 +255,25 @@ async function submitEdit() {
       payload.Password = editForm.value.Password;
     }
 
-    await api.put(`/archers/${user.value.archerId}`, payload);
+    const response = await api.put(`/archers/${user.value.archerId}`, payload);
 
-    alert(
-      "Profile update submitted successfully! Your changes will be visible after recorder approval."
-    );
+    alert("Profile updated successfully!");
+    
+    // Update local archer data
+    archer.value = response.data.archer;
+    
+    // Update auth store if user info changed
+    if (response.data.archer) {
+      authStore.user.firstName = response.data.archer.FirstName;
+      authStore.user.lastName = response.data.archer.LastName;
+      authStore.user.email = response.data.archer.Email;
+    }
+    
     closeEditModal();
-    hasPendingChanges.value = true;
   } catch (error) {
     console.error("Failed to update profile:", error);
     alert(
-      error.response?.data?.message ||
+      error.response?.data?.error ||
         "Failed to update profile. Please try again."
     );
   } finally {
@@ -417,33 +401,6 @@ function formatDate(dateString) {
 .detail-row span {
   color: #aaaaaa;
   text-align: right;
-}
-
-.pending-notice {
-  margin: 1.5rem;
-  padding: 1rem;
-  background: #2d3748;
-  border: 1px solid #4299e1;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.pending-notice .icon {
-  font-size: 1.5rem;
-}
-
-.pending-notice strong {
-  display: block;
-  color: #4299e1;
-  margin-bottom: 0.25rem;
-}
-
-.pending-notice p {
-  margin: 0;
-  color: #aaaaaa;
-  font-size: 0.9rem;
 }
 
 .modal-overlay {

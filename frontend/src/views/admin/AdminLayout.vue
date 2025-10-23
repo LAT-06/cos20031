@@ -19,11 +19,6 @@
           <li>
             <router-link to="/admin/championships">Championships</router-link>
           </li>
-          <li>
-            <router-link to="/admin/profile-requests"
-              >Profile Requests</router-link
-            >
-          </li>
         </ul>
       </nav>
 

@@ -33,6 +33,13 @@ exports.getAllCompetitions = async (req, res) => {
 
     const competitions = await Competition.findAll({
       where,
+      include: [
+        {
+          model: Round,
+          as: "round",
+          attributes: ["RoundID", "Name"],
+        },
+      ],
       order: [["Date", "DESC"]],
       limit: parseInt(limit),
       offset: parseInt(offset),
@@ -89,13 +96,17 @@ exports.getCompetitionById = async (req, res) => {
  */
 exports.createCompetition = async (req, res) => {
   try {
-    const { name, date, location, description } = req.body;
+    const { name, roundId, date, startDate, endDate, location, description, status } = req.body;
 
     const competition = await Competition.create({
       Name: name,
+      RoundID: roundId || null,
       Date: date,
+      StartDate: startDate || date,
+      EndDate: endDate || date,
       Location: location || null,
       Description: description || null,
+      Status: status || "upcoming",
     });
 
     res.status(201).json({
@@ -114,7 +125,7 @@ exports.createCompetition = async (req, res) => {
 exports.updateCompetition = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, date, location, description } = req.body;
+    const { name, roundId, date, startDate, endDate, location, description, status } = req.body;
 
     const competition = await Competition.findByPk(id);
 
@@ -123,9 +134,13 @@ exports.updateCompetition = async (req, res) => {
     }
 
     if (name) competition.Name = name;
+    if (roundId !== undefined) competition.RoundID = roundId;
     if (date) competition.Date = date;
+    if (startDate !== undefined) competition.StartDate = startDate;
+    if (endDate !== undefined) competition.EndDate = endDate;
     if (location !== undefined) competition.Location = location;
     if (description !== undefined) competition.Description = description;
+    if (status) competition.Status = status;
 
     await competition.save();
 

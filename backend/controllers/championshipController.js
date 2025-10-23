@@ -118,7 +118,7 @@ exports.createChampionship = async (req, res) => {
 exports.updateChampionship = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, year, startDate, endDate } = req.body;
+    const { name, year, startDate, endDate, competitionIds } = req.body;
 
     const championship = await ClubChampionship.findByPk(id);
 
@@ -133,9 +133,39 @@ exports.updateChampionship = async (req, res) => {
 
     await championship.save();
 
+    // Update competitions association if provided
+    if (competitionIds !== undefined && Array.isArray(competitionIds)) {
+      const { ChampionshipCompetition } = require("../models");
+      
+      // Remove all existing associations
+      await ChampionshipCompetition.destroy({
+        where: { ChampionshipID: id },
+      });
+
+      // Add new associations
+      if (competitionIds.length > 0) {
+        const associations = competitionIds.map((competitionId) => ({
+          ChampionshipID: id,
+          CompetitionID: competitionId,
+        }));
+        await ChampionshipCompetition.bulkCreate(associations);
+      }
+    }
+
+    // Fetch updated championship with competitions
+    const updated = await ClubChampionship.findByPk(id, {
+      include: [
+        {
+          model: Competition,
+          as: "competitions",
+          through: { attributes: [] },
+        },
+      ],
+    });
+
     res.json({
       message: "Championship updated successfully",
-      championship,
+      championship: updated,
     });
   } catch (error) {
     console.error("Update championship error:", error);
@@ -334,5 +364,114 @@ exports.getChampionshipStandings = async (req, res) => {
   } catch (error) {
     console.error("Get championship standings error:", error);
     res.status(500).json({ error: "Failed to fetch championship standings" });
+  }
+};
+
+/**
+ * Get championship winners (top 3 per division/class)
+ */
+exports.getChampionshipWinners = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get all competitions in championship
+    const championship = await ClubChampionship.findByPk(id, {
+      include: [
+        {
+          model: Competition,
+          as: "competitions",
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    if (!championship) {
+      return res.status(404).json({ error: "Championship not found" });
+    }
+
+    const competitionIds = championship.competitions.map(
+      (c) => c.CompetitionID
+    );
+
+    console.log(`Championship ${id} has ${competitionIds.length} competitions:`, competitionIds);
+
+    // If no competitions linked, return empty winners
+    if (competitionIds.length === 0) {
+      return res.json({
+        championship,
+        winners: {},
+        message: "No competitions linked to this championship",
+      });
+    }
+
+    // Get all approved scores from these competitions
+    const scores = await ScoreRecord.findAll({
+      where: {
+        CompetitionID: { [Op.in]: competitionIds },
+        Status: "approved",
+      },
+      include: [
+        {
+          model: Archer,
+          as: "archer",
+          attributes: ["ArcherID", "FirstName", "LastName"],
+          include: [{ model: Class, as: "class" }],
+        },
+        { model: Division, as: "division" },
+      ],
+    });
+
+    console.log(`Found ${scores.length} approved scores in these competitions`);
+
+    // Group by Class -> Division -> Archer
+    const winners = {};
+
+    scores.forEach((score) => {
+      const className = score.archer.class?.Name || "No Class";
+      const divisionName = score.division?.Name || "No Division";
+      const archerKey = score.ArcherID;
+
+      // Initialize structure
+      if (!winners[className]) {
+        winners[className] = {};
+      }
+      if (!winners[className][divisionName]) {
+        winners[className][divisionName] = {};
+      }
+      if (!winners[className][divisionName][archerKey]) {
+        winners[className][divisionName][archerKey] = {
+          ArcherID: score.ArcherID,
+          FirstName: score.archer.FirstName,
+          LastName: score.archer.LastName,
+          TotalScore: 0,
+          CompetitionCount: 0,
+        };
+      }
+
+      // Aggregate scores
+      winners[className][divisionName][archerKey].TotalScore += score.TotalScore;
+      winners[className][divisionName][archerKey].CompetitionCount += 1;
+    });
+
+    // Format and sort: top 3 per division
+    const formattedWinners = {};
+    Object.keys(winners).forEach((className) => {
+      formattedWinners[className] = {};
+      Object.keys(winners[className]).forEach((divisionName) => {
+        formattedWinners[className][divisionName] = Object.values(
+          winners[className][divisionName]
+        )
+          .sort((a, b) => b.TotalScore - a.TotalScore)
+          .slice(0, 3); // Top 3 only
+      });
+    });
+
+    res.json({
+      championship,
+      winners: formattedWinners,
+    });
+  } catch (error) {
+    console.error("Get championship winners error:", error);
+    res.status(500).json({ error: "Failed to fetch championship winners" });
   }
 };

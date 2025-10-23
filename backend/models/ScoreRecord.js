@@ -21,6 +21,11 @@ const ScoreRecord = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    EquipmentUsed: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: "Equipment/Division used during shooting (for verification)",
+    },
     CompetitionID: {
       type: DataTypes.INTEGER,
       allowNull: true,

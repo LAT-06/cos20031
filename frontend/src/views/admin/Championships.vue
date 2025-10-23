@@ -49,6 +49,13 @@
                 View
               </button>
               <button
+                class="btn-small btn-success"
+                @click="viewWinners(champ)"
+                title="View Championship Winners"
+              >
+                🏆 Winners
+              </button>
+              <button
                 class="btn-small btn-warning"
                 @click="editChampionship(champ)"
               >
@@ -258,6 +265,73 @@
         </div>
       </div>
     </div>
+
+    <!-- Winners Modal -->
+    <div v-if="showWinnersModal" class="modal-overlay" @click="closeWinnersModal">
+      <div class="modal-content large" @click.stop>
+        <div class="modal-header">
+          <h2>🏆 {{ selectedChampionship?.Name }} - Winners</h2>
+          <button class="close-btn" @click="closeWinnersModal">&times;</button>
+        </div>
+        <div class="modal-body" v-if="selectedChampionship">
+          <div v-if="loadingWinners" class="loading">Loading winners...</div>
+          <div v-else-if="winnersError" class="error-message">{{ winnersError }}</div>
+          <div v-else>
+            <!-- Winners by Division/Class -->
+            <div v-for="(classData, className) in winners" :key="className" class="winners-section">
+              <h3>{{ className }}</h3>
+              <div v-for="(winners, divisionName) in classData" :key="divisionName" class="division-winners">
+                <h4>{{ divisionName }}</h4>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Archer</th>
+                      <th>Total Score</th>
+                      <th>Competitions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(winner, index) in winners.slice(0, 3)" :key="winner.ArcherID">
+                      <td>
+                        <span class="rank-badge" :class="`rank-${index + 1}`">
+                          {{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }} {{ index + 1 }}
+                        </span>
+                      </td>
+                      <td>
+                        <strong>{{ winner.FirstName }} {{ winner.LastName }}</strong>
+                      </td>
+                      <td>
+                        <strong>{{ winner.TotalScore }}</strong>
+                      </td>
+                      <td>{{ winner.CompetitionCount }} competition(s)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div v-if="Object.keys(winners).length === 0" style="text-align: center; padding: 40px;">
+              <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+              <h3 style="color: #aaa; margin-bottom: 0.5rem;">No Winners Yet</h3>
+              <p style="color: #888; font-size: 0.9rem;">
+                This championship needs:<br>
+                1. ✓ Linked competitions<br>
+                2. ✓ Approved scores in those competitions
+              </p>
+              <p style="color: #666; font-size: 0.85rem; margin-top: 1rem;">
+                Go to Edit → Select competitions → Approve some scores!
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" @click="closeWinnersModal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -277,8 +351,14 @@ const searchTerm = ref("");
 // Modals
 const showViewModal = ref(false);
 const showFormModal = ref(false);
+const showWinnersModal = ref(false);
 const selectedChampionship = ref(null);
 const isEditMode = ref(false);
+
+// Winners
+const winners = ref({});
+const loadingWinners = ref(false);
+const winnersError = ref("");
 
 // Form
 const formData = ref({
@@ -341,6 +421,38 @@ function openAddModal() {
 function viewChampionship(champ) {
   selectedChampionship.value = champ;
   showViewModal.value = true;
+}
+
+async function viewWinners(champ) {
+  selectedChampionship.value = champ;
+  showWinnersModal.value = true;
+  loadingWinners.value = true;
+  winnersError.value = "";
+  winners.value = {};
+
+  try {
+    // Get all approved scores from competitions in this championship
+    const response = await api.get(`/championships/${champ.ChampionshipID}/winners`);
+    winners.value = response.data.winners || {};
+    
+    console.log('Winners data:', {
+      championshipId: champ.ChampionshipID,
+      championshipName: champ.Name,
+      competitionsCount: champ.competitions?.length || 0,
+      winnersCategories: Object.keys(winners.value).length,
+      message: response.data.message
+    });
+    
+    // Show helpful message if no data
+    if (Object.keys(winners.value).length === 0 && response.data.message) {
+      console.warn(response.data.message);
+    }
+  } catch (err) {
+    console.error("Failed to load winners:", err);
+    winnersError.value = err.response?.data?.error || "Failed to load winners";
+  } finally {
+    loadingWinners.value = false;
+  }
 }
 
 function editChampionship(champ) {
@@ -413,6 +525,13 @@ async function deleteChampionship(champ) {
 function closeViewModal() {
   showViewModal.value = false;
   selectedChampionship.value = null;
+}
+
+function closeWinnersModal() {
+  showWinnersModal.value = false;
+  selectedChampionship.value = null;
+  winners.value = {};
+  winnersError.value = "";
 }
 
 function closeFormModal() {
@@ -630,6 +749,10 @@ function formatDate(date) {
   background: #17a2b8;
 }
 
+.btn-success {
+  background: #28a745;
+}
+
 .btn-warning {
   background: #ffc107;
   color: #000;
@@ -637,6 +760,49 @@ function formatDate(date) {
 
 .btn-danger {
   background: #dc3545;
+}
+
+.winners-section {
+  margin-bottom: 2rem;
+}
+
+.winners-section h3 {
+  color: #ffffff;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #444;
+}
+
+.division-winners {
+  margin-bottom: 1.5rem;
+}
+
+.division-winners h4 {
+  color: #aaaaaa;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.rank-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #000;
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+  color: #000;
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%);
+  color: #fff;
 }
 
 .badge-upcoming {

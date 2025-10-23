@@ -48,7 +48,9 @@
             <td>{{ archer.Email }}</td>
             <td>{{ archer.Gender }}</td>
             <td>{{ archer.class?.Name || "N/A" }}</td>
-            <td>{{ archer.defaultDivision?.Name || "N/A" }}</td>
+            <td :style="archer.Role !== 'archer' ? 'opacity: 0.3' : ''">
+              {{ archer.Role === 'archer' ? (archer.defaultDivision?.Name || "N/A") : "-" }}
+            </td>
             <td>
               <span :class="`badge badge-${archer.Role}`">{{
                 archer.Role
@@ -112,7 +114,7 @@
               <label>Class:</label>
               <span>{{ selectedArcher.class?.Name || "N/A" }}</span>
             </div>
-            <div class="detail-item">
+            <div class="detail-item" v-if="selectedArcher.Role === 'archer' || selectedArcher.defaultDivision">
               <label>Default Division:</label>
               <span>{{ selectedArcher.defaultDivision?.Name || "N/A" }}</span>
             </div>
@@ -217,7 +219,7 @@
                   Only admins can assign recorder/admin roles
                 </small>
               </div>
-              <div class="form-group">
+              <div class="form-group" v-if="formData.role === 'archer'">
                 <label for="defaultDivisionId">Default Division</label>
                 <select
                   id="defaultDivisionId"
@@ -232,6 +234,14 @@
                     {{ division.Name }}
                   </option>
                 </select>
+                <small style="color: #aaaaaa">
+                  Division/equipment type for this archer
+                </small>
+              </div>
+              <div v-else style="padding: 10px; background: #2d2d2d; border-radius: 4px; margin-bottom: 1rem;">
+                <small style="color: #aaaaaa;">
+                  ℹ️ Default Division is only applicable for archers
+                </small>
               </div>
             </div>
 
@@ -292,7 +302,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import api from "@/services/api";
 
@@ -325,6 +335,13 @@ const formData = ref({
 const formLoading = ref(false);
 const formError = ref("");
 
+// Watch role changes to clear defaultDivisionId for admin/recorder
+watch(() => formData.value.role, (newRole) => {
+  if (newRole === 'admin' || newRole === 'recorder') {
+    formData.value.defaultDivisionId = "";
+  }
+});
+
 onMounted(() => {
   loadArchers();
   loadDivisions();
@@ -350,7 +367,7 @@ async function loadArchers() {
 
 async function loadDivisions() {
   try {
-    const response = await api.get("/metadata/divisions");
+    const response = await api.get("/divisions");
     divisions.value = response.data.divisions;
   } catch (err) {
     console.error("Failed to load divisions:", err);
@@ -402,17 +419,17 @@ async function saveArcher() {
 
   try {
     const payload = {
-      firstName: formData.value.firstName,
-      lastName: formData.value.lastName,
-      email: formData.value.email,
-      dateOfBirth: formData.value.dateOfBirth,
-      gender: formData.value.gender,
-      role: formData.value.role,
-      defaultDivisionId: formData.value.defaultDivisionId || null,
+      FirstName: formData.value.firstName,
+      LastName: formData.value.lastName,
+      Email: formData.value.email,
+      DateOfBirth: formData.value.dateOfBirth,
+      Gender: formData.value.gender,
+      Role: formData.value.role,
+      DivisionID: formData.value.defaultDivisionId || null,
     };
 
     if (formData.value.password) {
-      payload.password = formData.value.password;
+      payload.Password = formData.value.password;
     }
 
     if (isEditMode.value) {

@@ -64,6 +64,7 @@
             <th>Archer</th>
             <th>Round</th>
             <th>Division</th>
+            <th>Equipment</th>
             <th>Total Score</th>
             <th>Hits</th>
             <th>Status</th>
@@ -80,6 +81,11 @@
             <td>{{ score.archer.FirstName }} {{ score.archer.LastName }}</td>
             <td>{{ score.round.Name }}</td>
             <td>{{ score.division?.Name || "N/A" }}</td>
+            <td>
+              <span :class="score.EquipmentUsed !== score.division?.Name ? 'equipment-mismatch' : ''">
+                {{ score.EquipmentUsed || score.division?.Name || "N/A" }}
+              </span>
+            </td>
             <td>
               <strong>{{ score.TotalScore }}</strong>
             </td>
@@ -609,6 +615,7 @@ function formatDate(date) {
 
 .badge-staged {
   background: #6c757d;
+  color: #ffffff;
 }
 
 .badge-pending {
@@ -622,6 +629,11 @@ function formatDate(date) {
 
 .badge-rejected {
   background: #dc3545;
+}
+
+.equipment-mismatch {
+  color: #ffc107;
+  font-weight: 600;
 }
 
 .modal-overlay {

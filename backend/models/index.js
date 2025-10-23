@@ -70,6 +70,10 @@ Competition.belongsToMany(ClubChampionship, {
   as: "championships",
 });
 
+// Competition-Round relationship
+Competition.belongsTo(Round, { foreignKey: "RoundID", as: "round" });
+Round.hasMany(Competition, { foreignKey: "RoundID", as: "competitions" });
+
 // ScoreRecord associations
 ScoreRecord.belongsTo(Archer, { foreignKey: "ArcherID", as: "archer" });
 ScoreRecord.belongsTo(Round, { foreignKey: "RoundID", as: "round" });

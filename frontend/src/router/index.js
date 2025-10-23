@@ -53,11 +53,6 @@ const routes = [
         name: "AdminChampionships",
         component: () => import("@/views/admin/Championships.vue"),
       },
-      {
-        path: "profile-requests",
-        name: "AdminProfileRequests",
-        component: () => import("@/views/admin/ProfileRequests.vue"),
-      },
     ],
   },
   {

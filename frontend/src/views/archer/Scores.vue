@@ -283,7 +283,18 @@ async function viewScore(score) {
   // Load detailed end/arrow data
   try {
     const response = await api.get(`/scores/${score.ScoreRecordID}`);
-    scoreDetails.value = response.data.score.ends || [];
+    const scoreData = response.data.score;
+    
+    // Format ends data for display
+    if (scoreData.ends && scoreData.ends.length > 0) {
+      scoreDetails.value = scoreData.ends.map(end => ({
+        EndNumber: end.EndNumber,
+        Arrows: end.arrows.map(arrow => arrow.Score),
+        EndScore: end.arrows.reduce((sum, arrow) => sum + arrow.Score, 0)
+      }));
+    } else {
+      scoreDetails.value = [];
+    }
   } catch (err) {
     console.error("Failed to load score details:", err);
     scoreDetails.value = [];

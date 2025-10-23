@@ -13,9 +13,21 @@ const Competition = sequelize.define(
       type: DataTypes.STRING(200),
       allowNull: false,
     },
+    RoundID: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     Date: {
       type: DataTypes.DATEONLY,
       allowNull: false,
+    },
+    StartDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    EndDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
     },
     Location: {
       type: DataTypes.STRING(255),
@@ -24,6 +36,11 @@ const Competition = sequelize.define(
     Description: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    Status: {
+      type: DataTypes.ENUM("upcoming", "active", "completed"),
+      defaultValue: "upcoming",
+      allowNull: false,
     },
     CreatedAt: {
       type: DataTypes.DATE,

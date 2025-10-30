@@ -6,7 +6,7 @@
     <div class="form-container">
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="round">Round</label>
+          <label for="round">Round *</label>
           <select
             id="round"
             v-model="formData.roundId"
@@ -25,7 +25,24 @@
         </div>
 
         <div class="form-group">
-          <label for="division">Division</label>
+          <label for="competition">Competition (Optional)</label>
+          <select id="competition" v-model="formData.competitionId">
+            <option value="">Practice Score (No Competition)</option>
+            <option
+              v-for="comp in competitions"
+              :key="comp.CompetitionID"
+              :value="comp.CompetitionID"
+            >
+              {{ comp.Name }} - {{ formatDate(comp.Date) }}
+            </option>
+          </select>
+          <small style="color: var(--muted-text); display: block; margin-top: 4px">
+            Leave blank if this is a practice score
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="division">Division *</label>
           <select id="division" v-model="formData.divisionId" required>
             <option value="">Select division</option>
             <option
@@ -146,6 +163,7 @@ const scoreStore = useScoreStore();
 
 const rounds = ref([]);
 const divisions = ref([]);
+const competitions = ref([]);
 const roundDetails = ref(null);
 const loading = ref(false);
 const error = ref("");
@@ -154,6 +172,7 @@ const success = ref(false);
 const formData = ref({
   roundId: "",
   divisionId: "",
+  competitionId: "",
   dateShot: new Date().toISOString().split("T")[0],
   notes: "",
   ends: [],
@@ -163,10 +182,25 @@ onMounted(async () => {
   try {
     rounds.value = await metadataStore.fetchRounds();
     divisions.value = await metadataStore.fetchDivisions();
+    await loadCompetitions();
   } catch (err) {
     error.value = "Failed to load form data";
   }
 });
+
+async function loadCompetitions() {
+  try {
+    const response = await scoreStore.api.get("/competitions", {
+      params: { limit: 100 }
+    });
+    // Filter for upcoming and ongoing competitions only
+    competitions.value = response.data.competitions.filter(c => 
+      c.Status === 'upcoming' || c.Status === 'ongoing' || c.Status === 'active'
+    );
+  } catch (err) {
+    console.error("Failed to load competitions:", err);
+  }
+}
 
 async function loadRoundDetails() {
   if (!formData.value.roundId) return;
@@ -212,13 +246,30 @@ async function handleSubmit() {
   try {
     await scoreStore.createScore(formData.value);
     success.value = true;
+    
+    const scoreType = formData.value.competitionId ? "competition" : "practice";
+    const message = formData.value.competitionId 
+      ? "Competition score saved successfully! It will be reviewed by a recorder."
+      : "Practice score saved successfully!";
+    
+    alert(message);
+    
     setTimeout(() => {
       router.push("/archer/scores");
-    }, 2000);
+    }, 1500);
   } catch (err) {
     error.value = err.message || "Failed to save score";
   } finally {
     loading.value = false;
   }
+}
+
+function formatDate(date) {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 }
 </script>

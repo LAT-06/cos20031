@@ -38,7 +38,7 @@ const Competition = sequelize.define(
       allowNull: true,
     },
     Status: {
-      type: DataTypes.ENUM("upcoming", "active", "completed"),
+      type: DataTypes.ENUM("upcoming", "active", "ongoing", "completed", "cancelled"),
       defaultValue: "upcoming",
       allowNull: false,
     },

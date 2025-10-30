@@ -114,9 +114,14 @@
               <label>Class:</label>
               <span>{{ selectedArcher.class?.Name || "N/A" }}</span>
             </div>
-            <div class="detail-item" v-if="selectedArcher.Role === 'archer' || selectedArcher.defaultDivision">
+            <div class="detail-item">
               <label>Default Division:</label>
-              <span>{{ selectedArcher.defaultDivision?.Name || "N/A" }}</span>
+              <span v-if="selectedArcher.Role === 'archer'">
+                {{ selectedArcher.defaultDivision?.Name || "N/A" }}
+              </span>
+              <span v-else style="opacity: 0.5">
+                -
+              </span>
             </div>
             <div class="detail-item">
               <label>Role:</label>

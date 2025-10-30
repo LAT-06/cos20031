@@ -133,21 +133,12 @@
             </div>
           </div>
 
-          <div class="info-box">
-            <i class="icon">ℹ️</i>
-            <p>
-              <strong>Note:</strong> Profile changes require approval from a
-              recorder. Your current profile will remain visible until the
-              changes are approved.
-            </p>
-          </div>
-
           <div class="modal-footer">
             <button type="button" @click="closeEditModal" class="btn-secondary">
               Cancel
             </button>
             <button type="submit" class="btn-primary" :disabled="loading">
-              {{ loading ? "Submitting..." : "Submit for Approval" }}
+              {{ loading ? "Saving..." : "Save Changes" }}
             </button>
           </div>
         </form>
@@ -308,7 +299,9 @@ function formatDate(dateString) {
 
 .header-section h1 {
   margin: 0;
-  color: #ffffff;
+  color: #111111;
+  font-size: 2.75rem;
+  font-weight: 800;
 }
 
 .profile-card {

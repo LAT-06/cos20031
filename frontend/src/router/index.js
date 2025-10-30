@@ -86,6 +86,11 @@ const routes = [
         component: () => import("@/views/archer/Rounds.vue"),
       },
       {
+        path: "championships",
+        name: "ArcherChampionships",
+        component: () => import("@/views/archer/Championships.vue"),
+      },
+      {
         path: "profile",
         name: "ArcherProfile",
         component: () => import("@/views/archer/Profile.vue"),

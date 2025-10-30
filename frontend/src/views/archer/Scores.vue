@@ -45,6 +45,16 @@
             {{ round.Name }}
           </option>
         </select>
+
+        <select
+          v-model="filterType"
+          @change="loadScores"
+          style="margin-left: 12px"
+        >
+          <option value="">All Types</option>
+          <option value="competition">Competition</option>
+          <option value="practice">Practice</option>
+        </select>
       </div>
     </div>
 
@@ -57,6 +67,7 @@
             <th>Date</th>
             <th>Round</th>
             <th>Division</th>
+            <th>Type</th>
             <th>Total Score</th>
             <th>Hits</th>
             <th>Status</th>
@@ -68,6 +79,14 @@
             <td>{{ formatDate(score.DateShot) }}</td>
             <td>{{ score.round.Name }}</td>
             <td>{{ score.division?.Name || "N/A" }}</td>
+            <td>
+              <span v-if="score.CompetitionID" class="badge badge-competition">
+                🏆 Competition
+              </span>
+              <span v-else class="badge badge-practice">
+                📝 Practice
+              </span>
+            </td>
             <td>
               <strong>{{ score.TotalScore }}</strong>
             </td>
@@ -223,6 +242,7 @@ const loading = ref(false);
 const error = ref("");
 const filterStatus = ref("");
 const filterRound = ref("");
+const filterType = ref("");
 
 const showViewModal = ref(false);
 const selectedScore = ref(null);
@@ -260,7 +280,16 @@ async function loadScores() {
     if (filterRound.value) params.roundId = filterRound.value;
 
     const response = await api.get("/scores", { params });
-    scores.value = response.data.scores;
+    let filteredScores = response.data.scores;
+    
+    // Filter by type (competition vs practice)
+    if (filterType.value === 'competition') {
+      filteredScores = filteredScores.filter(s => s.CompetitionID);
+    } else if (filterType.value === 'practice') {
+      filteredScores = filteredScores.filter(s => !s.CompetitionID);
+    }
+    
+    scores.value = filteredScores;
   } catch (err) {
     error.value = err.response?.data?.error || "Failed to load scores";
   } finally {
@@ -669,6 +698,17 @@ tbody tr {
 .notes-section p {
   color: #cccccc;
   line-height: 1.6;
+}
+
+.badge-competition {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.badge-practice {
+  background: #6c757d;
+  color: white;
 }
 
 .modal-footer {

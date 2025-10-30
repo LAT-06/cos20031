@@ -98,6 +98,30 @@ exports.createCompetition = async (req, res) => {
   try {
     const { name, roundId, date, startDate, endDate, location, description, status } = req.body;
 
+    console.log('Creating competition with data:', {
+      name,
+      roundId,
+      date,
+      startDate,
+      endDate,
+      location,
+      description,
+      status
+    });
+
+    // Validate required fields
+    if (!name || !date) {
+      return res.status(400).json({ error: "Name and date are required" });
+    }
+
+    // Validate status value if provided
+    const validStatuses = ['upcoming', 'active', 'ongoing', 'completed', 'cancelled'];
+    if (status && !validStatuses.includes(status)) {
+      return res.status(400).json({ 
+        error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+      });
+    }
+
     const competition = await Competition.create({
       Name: name,
       RoundID: roundId || null,
@@ -109,13 +133,18 @@ exports.createCompetition = async (req, res) => {
       Status: status || "upcoming",
     });
 
+    console.log('Competition created successfully:', competition.CompetitionID);
+
     res.status(201).json({
       message: "Competition created successfully",
       competition,
     });
   } catch (error) {
     console.error("Create competition error:", error);
-    res.status(500).json({ error: "Failed to create competition" });
+    res.status(500).json({ 
+      error: "Failed to create competition",
+      details: error.message 
+    });
   }
 };
 

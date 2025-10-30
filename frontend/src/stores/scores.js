@@ -196,5 +196,6 @@ export const useScoreStore = defineStore("score", () => {
     fetchStagedScores,
     fetchClubRecords,
     fetchPersonalBests,
+    api, // Export api for direct usage
   };
 });

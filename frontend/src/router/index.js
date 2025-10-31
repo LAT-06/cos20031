@@ -91,6 +91,11 @@ const routes = [
         component: () => import("@/views/archer/Championships.vue"),
       },
       {
+        path: "eligible-rounds",
+        name: "EligibleRounds",
+        component: () => import("@/views/archer/EligibleRounds.vue"),
+      },
+      {
         path: "profile",
         name: "ArcherProfile",
         component: () => import("@/views/archer/Profile.vue"),

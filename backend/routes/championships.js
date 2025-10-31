@@ -12,11 +12,7 @@ router.get(
   auth,
   championshipController.getChampionshipStandings
 );
-router.get(
-  "/:id/winners",
-  auth,
-  championshipController.getChampionshipWinners
-);
+router.get("/:id/winners", auth, championshipController.getChampionshipWinners);
 
 // Admin only
 router.post(

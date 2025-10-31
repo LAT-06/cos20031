@@ -83,9 +83,7 @@
               <span v-if="score.CompetitionID" class="badge badge-competition">
                 🏆 Competition
               </span>
-              <span v-else class="badge badge-practice">
-                📝 Practice
-              </span>
+              <span v-else class="badge badge-practice"> 📝 Practice </span>
             </td>
             <td>
               <strong>{{ score.TotalScore }}</strong>
@@ -281,14 +279,14 @@ async function loadScores() {
 
     const response = await api.get("/scores", { params });
     let filteredScores = response.data.scores;
-    
+
     // Filter by type (competition vs practice)
-    if (filterType.value === 'competition') {
-      filteredScores = filteredScores.filter(s => s.CompetitionID);
-    } else if (filterType.value === 'practice') {
-      filteredScores = filteredScores.filter(s => !s.CompetitionID);
+    if (filterType.value === "competition") {
+      filteredScores = filteredScores.filter((s) => s.CompetitionID);
+    } else if (filterType.value === "practice") {
+      filteredScores = filteredScores.filter((s) => !s.CompetitionID);
     }
-    
+
     scores.value = filteredScores;
   } catch (err) {
     error.value = err.response?.data?.error || "Failed to load scores";
@@ -313,13 +311,13 @@ async function viewScore(score) {
   try {
     const response = await api.get(`/scores/${score.ScoreRecordID}`);
     const scoreData = response.data.score;
-    
+
     // Format ends data for display
     if (scoreData.ends && scoreData.ends.length > 0) {
-      scoreDetails.value = scoreData.ends.map(end => ({
+      scoreDetails.value = scoreData.ends.map((end) => ({
         EndNumber: end.EndNumber,
-        Arrows: end.arrows.map(arrow => arrow.Score),
-        EndScore: end.arrows.reduce((sum, arrow) => sum + arrow.Score, 0)
+        Arrows: end.arrows.map((arrow) => arrow.Score),
+        EndScore: end.arrows.reduce((sum, arrow) => sum + arrow.Score, 0),
       }));
     } else {
       scoreDetails.value = [];

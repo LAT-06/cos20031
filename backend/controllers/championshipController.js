@@ -136,7 +136,7 @@ exports.updateChampionship = async (req, res) => {
     // Update competitions association if provided
     if (competitionIds !== undefined && Array.isArray(competitionIds)) {
       const { ChampionshipCompetition } = require("../models");
-      
+
       // Remove all existing associations
       await ChampionshipCompetition.destroy({
         where: { ChampionshipID: id },
@@ -393,7 +393,10 @@ exports.getChampionshipWinners = async (req, res) => {
       (c) => c.CompetitionID
     );
 
-    console.log(`Championship ${id} has ${competitionIds.length} competitions:`, competitionIds);
+    console.log(
+      `Championship ${id} has ${competitionIds.length} competitions:`,
+      competitionIds
+    );
 
     // If no competitions linked, return empty winners
     if (competitionIds.length === 0) {
@@ -449,7 +452,8 @@ exports.getChampionshipWinners = async (req, res) => {
       }
 
       // Aggregate scores
-      winners[className][divisionName][archerKey].TotalScore += score.TotalScore;
+      winners[className][divisionName][archerKey].TotalScore +=
+        score.TotalScore;
       winners[className][divisionName][archerKey].CompetitionCount += 1;
     });
 
@@ -461,6 +465,12 @@ exports.getChampionshipWinners = async (req, res) => {
         formattedWinners[className][divisionName] = Object.values(
           winners[className][divisionName]
         )
+          .map((archer) => ({
+            ...archer,
+            archerName: `${archer.FirstName} ${archer.LastName}`,
+            totalScore: archer.TotalScore,
+            competitionCount: archer.CompetitionCount,
+          }))
           .sort((a, b) => b.TotalScore - a.TotalScore)
           .slice(0, 3); // Top 3 only
       });

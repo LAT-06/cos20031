@@ -96,9 +96,7 @@ exports.getCompetitionById = async (req, res) => {
  */
 exports.createCompetition = async (req, res) => {
   try {
-    const { name, roundId, date, startDate, endDate, location, description, status } = req.body;
-
-    console.log('Creating competition with data:', {
+    const {
       name,
       roundId,
       date,
@@ -106,7 +104,18 @@ exports.createCompetition = async (req, res) => {
       endDate,
       location,
       description,
-      status
+      status,
+    } = req.body;
+
+    console.log("Creating competition with data:", {
+      name,
+      roundId,
+      date,
+      startDate,
+      endDate,
+      location,
+      description,
+      status,
     });
 
     // Validate required fields
@@ -115,10 +124,16 @@ exports.createCompetition = async (req, res) => {
     }
 
     // Validate status value if provided
-    const validStatuses = ['upcoming', 'active', 'ongoing', 'completed', 'cancelled'];
+    const validStatuses = [
+      "upcoming",
+      "active",
+      "ongoing",
+      "completed",
+      "cancelled",
+    ];
     if (status && !validStatuses.includes(status)) {
-      return res.status(400).json({ 
-        error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+      return res.status(400).json({
+        error: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
       });
     }
 
@@ -133,7 +148,7 @@ exports.createCompetition = async (req, res) => {
       Status: status || "upcoming",
     });
 
-    console.log('Competition created successfully:', competition.CompetitionID);
+    console.log("Competition created successfully:", competition.CompetitionID);
 
     res.status(201).json({
       message: "Competition created successfully",
@@ -141,9 +156,9 @@ exports.createCompetition = async (req, res) => {
     });
   } catch (error) {
     console.error("Create competition error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to create competition",
-      details: error.message 
+      details: error.message,
     });
   }
 };
@@ -154,7 +169,16 @@ exports.createCompetition = async (req, res) => {
 exports.updateCompetition = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, roundId, date, startDate, endDate, location, description, status } = req.body;
+    const {
+      name,
+      roundId,
+      date,
+      startDate,
+      endDate,
+      location,
+      description,
+      status,
+    } = req.body;
 
     const competition = await Competition.findByPk(id);
 

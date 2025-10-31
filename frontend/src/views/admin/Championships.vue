@@ -267,7 +267,11 @@
     </div>
 
     <!-- Winners Modal -->
-    <div v-if="showWinnersModal" class="modal-overlay" @click="closeWinnersModal">
+    <div
+      v-if="showWinnersModal"
+      class="modal-overlay"
+      @click="closeWinnersModal"
+    >
       <div class="modal-content large" @click.stop>
         <div class="modal-header">
           <h2>🏆 {{ selectedChampionship?.Name }} - Winners</h2>
@@ -275,12 +279,22 @@
         </div>
         <div class="modal-body" v-if="selectedChampionship">
           <div v-if="loadingWinners" class="loading">Loading winners...</div>
-          <div v-else-if="winnersError" class="error-message">{{ winnersError }}</div>
+          <div v-else-if="winnersError" class="error-message">
+            {{ winnersError }}
+          </div>
           <div v-else>
             <!-- Winners by Division/Class -->
-            <div v-for="(classData, className) in winners" :key="className" class="winners-section">
+            <div
+              v-for="(classData, className) in winners"
+              :key="className"
+              class="winners-section"
+            >
               <h3>{{ className }}</h3>
-              <div v-for="(winners, divisionName) in classData" :key="divisionName" class="division-winners">
+              <div
+                v-for="(winners, divisionName) in classData"
+                :key="divisionName"
+                class="division-winners"
+              >
                 <h4>{{ divisionName }}</h4>
                 <table>
                   <thead>
@@ -292,14 +306,20 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(winner, index) in winners.slice(0, 3)" :key="winner.ArcherID">
+                    <tr
+                      v-for="(winner, index) in winners.slice(0, 3)"
+                      :key="winner.ArcherID"
+                    >
                       <td>
                         <span class="rank-badge" :class="`rank-${index + 1}`">
-                          {{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }} {{ index + 1 }}
+                          {{ index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉" }}
+                          {{ index + 1 }}
                         </span>
                       </td>
                       <td>
-                        <strong>{{ winner.FirstName }} {{ winner.LastName }}</strong>
+                        <strong
+                          >{{ winner.FirstName }} {{ winner.LastName }}</strong
+                        >
                       </td>
                       <td>
                         <strong>{{ winner.TotalScore }}</strong>
@@ -311,15 +331,18 @@
               </div>
             </div>
 
-            <div v-if="Object.keys(winners).length === 0" style="text-align: center; padding: 40px;">
-              <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
-              <h3 style="color: #aaa; margin-bottom: 0.5rem;">No Winners Yet</h3>
-              <p style="color: #888; font-size: 0.9rem;">
-                This championship needs:<br>
-                1. ✓ Linked competitions<br>
+            <div
+              v-if="Object.keys(winners).length === 0"
+              style="text-align: center; padding: 40px"
+            >
+              <div style="font-size: 3rem; margin-bottom: 1rem">🏆</div>
+              <h3 style="color: #aaa; margin-bottom: 0.5rem">No Winners Yet</h3>
+              <p style="color: #888; font-size: 0.9rem">
+                This championship needs:<br />
+                1. ✓ Linked competitions<br />
                 2. ✓ Approved scores in those competitions
               </p>
-              <p style="color: #666; font-size: 0.85rem; margin-top: 1rem;">
+              <p style="color: #666; font-size: 0.85rem; margin-top: 1rem">
                 Go to Edit → Select competitions → Approve some scores!
               </p>
             </div>
@@ -432,17 +455,19 @@ async function viewWinners(champ) {
 
   try {
     // Get all approved scores from competitions in this championship
-    const response = await api.get(`/championships/${champ.ChampionshipID}/winners`);
+    const response = await api.get(
+      `/championships/${champ.ChampionshipID}/winners`
+    );
     winners.value = response.data.winners || {};
-    
-    console.log('Winners data:', {
+
+    console.log("Winners data:", {
       championshipId: champ.ChampionshipID,
       championshipName: champ.Name,
       competitionsCount: champ.competitions?.length || 0,
       winnersCategories: Object.keys(winners.value).length,
-      message: response.data.message
+      message: response.data.message,
     });
-    
+
     // Show helpful message if no data
     if (Object.keys(winners.value).length === 0 && response.data.message) {
       console.warn(response.data.message);

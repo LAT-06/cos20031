@@ -249,17 +249,17 @@ async function submitEdit() {
     const response = await api.put(`/archers/${user.value.archerId}`, payload);
 
     alert("Profile updated successfully!");
-    
+
     // Update local archer data
     archer.value = response.data.archer;
-    
+
     // Update auth store if user info changed
     if (response.data.archer) {
       authStore.user.firstName = response.data.archer.FirstName;
       authStore.user.lastName = response.data.archer.LastName;
       authStore.user.email = response.data.archer.Email;
     }
-    
+
     closeEditModal();
   } catch (error) {
     console.error("Failed to update profile:", error);

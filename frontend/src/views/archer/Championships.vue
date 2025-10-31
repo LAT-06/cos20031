@@ -21,16 +21,16 @@
             <h3>{{ championship.Name }}</h3>
             <span class="year-badge">{{ championship.Year }}</span>
           </div>
-          
+
           <div class="card-body">
             <div class="info-row">
               <span class="label">📅 Period:</span>
               <span>
-                {{ formatDate(championship.StartDate) }} - 
+                {{ formatDate(championship.StartDate) }} -
                 {{ formatDate(championship.EndDate) }}
               </span>
             </div>
-            
+
             <div class="info-row">
               <span class="label">🏆 Competitions:</span>
               <span>{{ championship.competitions?.length || 0 }}</span>
@@ -38,16 +38,10 @@
           </div>
 
           <div class="card-footer">
-            <button
-              class="btn-primary"
-              @click="viewWinners(championship)"
-            >
+            <button class="btn-primary" @click="viewWinners(championship)">
               🏆 View Winners
             </button>
-            <button
-              class="btn-secondary"
-              @click="viewDetails(championship)"
-            >
+            <button class="btn-secondary" @click="viewDetails(championship)">
               📋 Details
             </button>
           </div>
@@ -56,7 +50,11 @@
     </div>
 
     <!-- Details Modal -->
-    <div v-if="showDetailsModal" class="modal-overlay" @click="closeDetailsModal">
+    <div
+      v-if="showDetailsModal"
+      class="modal-overlay"
+      @click="closeDetailsModal"
+    >
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h2>{{ selectedChampionship?.Name }}</h2>
@@ -104,24 +102,34 @@
     </div>
 
     <!-- Winners Modal -->
-    <div v-if="showWinnersModal" class="modal-overlay" @click="closeWinnersModal">
+    <div
+      v-if="showWinnersModal"
+      class="modal-overlay"
+      @click="closeWinnersModal"
+    >
       <div class="modal-content large" @click.stop>
         <div class="modal-header">
           <h2>🏆 {{ selectedChampionship?.Name }} - Winners</h2>
           <button class="close-btn" @click="closeWinnersModal">&times;</button>
         </div>
         <div class="modal-body">
-          <div v-if="loadingWinners" class="loading">
-            Loading winners...
-          </div>
+          <div v-if="loadingWinners" class="loading">Loading winners...</div>
           <div v-else-if="winnersError" class="error-message">
             {{ winnersError }}
           </div>
-          <div v-else-if="Object.keys(winners).length === 0" class="empty-state">
+          <div
+            v-else-if="Object.keys(winners).length === 0"
+            class="empty-state"
+          >
             <p style="font-size: 2rem; margin-bottom: 16px">🏆</p>
-            <p style="font-size: 1.2rem; margin-bottom: 8px">No winners data available</p>
+            <p style="font-size: 1.2rem; margin-bottom: 8px">
+              No winners data available
+            </p>
             <p style="color: var(--muted-text); margin: 0">
-              {{ winners.message || 'This championship may not have any approved scores yet.' }}
+              {{
+                winners.message ||
+                "This championship may not have any approved scores yet."
+              }}
             </p>
           </div>
           <div v-else class="winners-container">
@@ -131,14 +139,14 @@
               class="class-section"
             >
               <h3 class="class-title">{{ className }}</h3>
-              
+
               <div
                 v-for="(divisionWinners, divisionName) in classData"
                 :key="divisionName"
                 class="division-section"
               >
                 <h4 class="division-title">{{ divisionName }}</h4>
-                
+
                 <div class="winners-list">
                   <div
                     v-for="(winner, index) in divisionWinners"
@@ -197,8 +205,11 @@ async function loadChampionships() {
 
   try {
     const response = await api.get("/championships");
+    console.log('Championships response:', response.data);
+    console.log('Championships array:', response.data.championships);
     championships.value = response.data.championships;
   } catch (err) {
+    console.error('Load championships error:', err);
     error.value = err.response?.data?.error || "Failed to load championships";
   } finally {
     loading.value = false;
@@ -223,7 +234,9 @@ async function viewWinners(championship) {
   winners.value = {};
 
   try {
-    const response = await api.get(`/championships/${championship.ChampionshipID}/winners`);
+    const response = await api.get(
+      `/championships/${championship.ChampionshipID}/winners`
+    );
     winners.value = response.data.winners || {};
   } catch (err) {
     winnersError.value = err.response?.data?.error || "Failed to load winners";

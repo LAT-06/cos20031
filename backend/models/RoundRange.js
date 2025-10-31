@@ -27,9 +27,10 @@ const RoundRange = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-        min: 5,
-        max: 6,
+        min: 1,
+        max: 50,
       },
+      comment: "Number of ends in this range",
     },
     TargetFace: {
       type: DataTypes.STRING(50),

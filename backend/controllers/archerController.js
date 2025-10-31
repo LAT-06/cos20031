@@ -117,7 +117,9 @@ exports.createArcher = async (req, res) => {
     const finalDivisionID = DivisionID || defaultDivisionId || null;
 
     // Check if email already exists
-    const existingArcher = await Archer.findOne({ where: { Email: finalEmail } });
+    const existingArcher = await Archer.findOne({
+      where: { Email: finalEmail },
+    });
     if (existingArcher) {
       return res.status(400).json({ error: "Email already registered" });
     }
@@ -202,20 +204,20 @@ exports.updateArcher = async (req, res) => {
       if (classObj) updateData.ClassID = classObj.ClassID;
     }
     if (Gender) updateData.Gender = Gender;
-    
+
     // Only admin can change roles
     if (Role && isAdmin) {
       updateData.Role = Role;
       // Clear DefaultDivisionID if changing to admin/recorder
-      if (Role === 'admin' || Role === 'recorder') {
+      if (Role === "admin" || Role === "recorder") {
         updateData.DefaultDivisionID = null;
       }
     }
-    
+
     // Set division only if role is archer
     if (DivisionID !== undefined) {
       const currentRole = updateData.Role || archer.Role;
-      if (currentRole === 'archer') {
+      if (currentRole === "archer") {
         updateData.DefaultDivisionID = DivisionID;
       } else {
         updateData.DefaultDivisionID = null;

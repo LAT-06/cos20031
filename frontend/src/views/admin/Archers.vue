@@ -49,7 +49,11 @@
             <td>{{ archer.Gender }}</td>
             <td>{{ archer.class?.Name || "N/A" }}</td>
             <td :style="archer.Role !== 'archer' ? 'opacity: 0.3' : ''">
-              {{ archer.Role === 'archer' ? (archer.defaultDivision?.Name || "N/A") : "-" }}
+              {{
+                archer.Role === "archer"
+                  ? archer.defaultDivision?.Name || "N/A"
+                  : "-"
+              }}
             </td>
             <td>
               <span :class="`badge badge-${archer.Role}`">{{
@@ -119,9 +123,7 @@
               <span v-if="selectedArcher.Role === 'archer'">
                 {{ selectedArcher.defaultDivision?.Name || "N/A" }}
               </span>
-              <span v-else style="opacity: 0.5">
-                -
-              </span>
+              <span v-else style="opacity: 0.5"> - </span>
             </div>
             <div class="detail-item">
               <label>Role:</label>
@@ -243,8 +245,16 @@
                   Division/equipment type for this archer
                 </small>
               </div>
-              <div v-else style="padding: 10px; background: #2d2d2d; border-radius: 4px; margin-bottom: 1rem;">
-                <small style="color: #aaaaaa;">
+              <div
+                v-else
+                style="
+                  padding: 10px;
+                  background: #2d2d2d;
+                  border-radius: 4px;
+                  margin-bottom: 1rem;
+                "
+              >
+                <small style="color: #aaaaaa">
                   ℹ️ Default Division is only applicable for archers
                 </small>
               </div>
@@ -341,11 +351,14 @@ const formLoading = ref(false);
 const formError = ref("");
 
 // Watch role changes to clear defaultDivisionId for admin/recorder
-watch(() => formData.value.role, (newRole) => {
-  if (newRole === 'admin' || newRole === 'recorder') {
-    formData.value.defaultDivisionId = "";
+watch(
+  () => formData.value.role,
+  (newRole) => {
+    if (newRole === "admin" || newRole === "recorder") {
+      formData.value.defaultDivisionId = "";
+    }
   }
-});
+);
 
 onMounted(() => {
   loadArchers();

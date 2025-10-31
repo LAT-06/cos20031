@@ -82,7 +82,24 @@ exports.getRoundById = async (req, res) => {
  */
 exports.createRound = async (req, res) => {
   try {
+    console.log('RAW REQUEST BODY:', JSON.stringify(req.body, null, 2));
+    console.log('Type of ranges:', typeof req.body.ranges);
+    console.log('Is ranges array?', Array.isArray(req.body.ranges));
+    
     const { name, description, ranges } = req.body;
+
+    console.log('Creating round with data:', {
+      name,
+      description,
+      ranges: ranges,
+      rangesType: typeof ranges,
+      rangesIsArray: Array.isArray(ranges)
+    });
+
+    // Validate required fields
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "Round name is required" });
+    }
 
     // Check if round name already exists
     const existing = await Round.findOne({ where: { Name: name } });
@@ -93,20 +110,41 @@ exports.createRound = async (req, res) => {
     // Create round
     const round = await Round.create({
       Name: name,
-      Description: description,
+      Description: description || null,
     });
+
+    console.log('Round created with ID:', round.RoundID);
 
     // Create ranges if provided
     if (ranges && Array.isArray(ranges)) {
-      for (const range of ranges) {
+      console.log('Creating', ranges.length, 'ranges...');
+      for (let i = 0; i < ranges.length; i++) {
+        const range = ranges[i];
+        console.log(`Creating range ${i + 1}:`, range);
+        
+        // Map frontend fields to backend fields
+        const rangeNo = range.rangeNo || (i + 1);
+        const distance = range.distance;
+        const ends = range.numEnds || range.ends;
+        const targetFace = range.targetSize ? `${range.targetSize}cm` : (range.targetFace || '122cm');
+        
+        // Validate range data
+        if (!distance || !ends) {
+          console.error('Invalid range data:', range);
+          return res.status(400).json({ 
+            error: `Range ${i + 1}: distance and ends/numEnds are required` 
+          });
+        }
+        
         await RoundRange.create({
           RoundID: round.RoundID,
-          RangeNo: range.rangeNo,
-          Distance: range.distance,
-          Ends: range.ends,
-          TargetFace: range.targetFace,
+          RangeNo: rangeNo,
+          Distance: distance,
+          Ends: ends,
+          TargetFace: targetFace,
         });
       }
+      console.log('All ranges created successfully');
     }
 
     // Fetch created round with ranges
@@ -120,13 +158,20 @@ exports.createRound = async (req, res) => {
       ],
     });
 
+    console.log('Round creation complete:', result.RoundID);
+
     res.status(201).json({
       message: "Round created successfully",
       round: result,
     });
   } catch (error) {
     console.error("Create round error:", error);
-    res.status(500).json({ error: "Failed to create round" });
+    console.error("Error details:", error.message);
+    console.error("Stack trace:", error.stack);
+    res.status(500).json({ 
+      error: "Failed to create round",
+      details: error.message 
+    });
   }
 };
 
@@ -153,14 +198,22 @@ exports.updateRound = async (req, res) => {
       // Delete existing ranges
       await RoundRange.destroy({ where: { RoundID: id } });
 
-      // Create new ranges
-      for (const range of ranges) {
+      // Create new ranges with field mapping
+      for (let i = 0; i < ranges.length; i++) {
+        const range = ranges[i];
+        
+        // Map frontend fields to backend fields
+        const rangeNo = range.rangeNo || (i + 1);
+        const distance = range.distance;
+        const ends = range.numEnds || range.ends;
+        const targetFace = range.targetSize ? `${range.targetSize}cm` : (range.targetFace || '122cm');
+        
         await RoundRange.create({
           RoundID: id,
-          RangeNo: range.rangeNo,
-          Distance: range.distance,
-          Ends: range.ends,
-          TargetFace: range.targetFace,
+          RangeNo: rangeNo,
+          Distance: distance,
+          Ends: ends,
+          TargetFace: targetFace,
         });
       }
     }
@@ -292,5 +345,117 @@ exports.createEquivalentRound = async (req, res) => {
   } catch (error) {
     console.error("Create equivalent round error:", error);
     res.status(500).json({ error: "Failed to create equivalent round" });
+  }
+};
+
+/**
+ * Get eligible rounds for an archer based on their class/division
+ */
+exports.getEligibleRounds = async (req, res) => {
+  try {
+    const { archerId } = req.params;
+
+    // Get archer with their class
+    const { Archer } = require("../models");
+    const archer = await Archer.findByPk(archerId, {
+      include: [{ model: Class, as: "class" }],
+    });
+
+    if (!archer) {
+      return res.status(404).json({ error: "Archer not found" });
+    }
+
+    if (!archer.ClassID) {
+      return res.status(400).json({ 
+        error: "Archer does not have a class assigned",
+        message: "Please contact an administrator to assign a class to your profile"
+      });
+    }
+
+    // Get all categories for this class
+    const { Category } = require("../models");
+    const categories = await Category.findAll({
+      where: { ClassID: archer.ClassID },
+    });
+
+    const categoryIds = categories.map((c) => c.CategoryID);
+
+    if (categoryIds.length === 0) {
+      return res.json({
+        archer: {
+          name: `${archer.FirstName} ${archer.LastName}`,
+          class: archer.class?.Name || "N/A",
+        },
+        eligibleRounds: [],
+        message: "No categories found for your class",
+      });
+    }
+
+    // Get all base rounds with their equivalent rounds for these categories
+    const today = new Date();
+    const equivalents = await EquivalentRound.findAll({
+      where: {
+        CategoryID: { [Op.in]: categoryIds },
+        StartDate: { [Op.lte]: today },
+        [Op.or]: [
+          { EndDate: null },
+          { EndDate: { [Op.gte]: today } },
+        ],
+      },
+      include: [
+        { 
+          model: Round, 
+          as: "baseRound",
+          include: [{ model: RoundRange, as: "ranges" }],
+        },
+        { 
+          model: Round, 
+          as: "equivalentRound",
+          include: [{ model: RoundRange, as: "ranges" }],
+        },
+        { model: Category, as: "category" },
+      ],
+    });
+
+    // Group rounds by base round
+    const roundsMap = new Map();
+
+    equivalents.forEach((eq) => {
+      const baseRoundId = eq.BaseRoundID;
+      
+      if (!roundsMap.has(baseRoundId)) {
+        roundsMap.set(baseRoundId, {
+          baseRound: eq.baseRound,
+          equivalentRounds: [],
+          categories: new Set(),
+        });
+      }
+
+      const roundData = roundsMap.get(baseRoundId);
+      roundData.equivalentRounds.push({
+        ...eq.equivalentRound.toJSON(),
+        category: eq.category.Name,
+      });
+      roundData.categories.add(eq.category.Name);
+    });
+
+    // Format response
+    const eligibleRounds = Array.from(roundsMap.values()).map((data) => ({
+      baseRound: data.baseRound,
+      equivalentRounds: data.equivalentRounds,
+      categories: Array.from(data.categories),
+    }));
+
+    res.json({
+      archer: {
+        name: `${archer.FirstName} ${archer.LastName}`,
+        class: archer.class?.Name || "N/A",
+      },
+      eligibleRounds,
+      totalRounds: eligibleRounds.length,
+    });
+  } catch (error) {
+    console.error("Get eligible rounds error:", error);
+    res.status(500).json({ error: "Failed to fetch eligible rounds" });
   }
 };

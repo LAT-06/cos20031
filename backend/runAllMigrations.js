@@ -1,17 +1,17 @@
-const { execSync } = require('child_process');
+const { execSync } = require("child_process");
 
-console.log('🚀 Running all database migrations...\n');
+console.log("🚀 Running all database migrations...\n");
 
 const migrations = [
-  'migrations/updateCompetition.js',
-  'migrations/addEquipmentToScoreRecord.js',
+  "migrations/updateCompetition.js",
+  "migrations/addEquipmentToScoreRecord.js",
 ];
 
 for (const migration of migrations) {
   try {
     console.log(`\n📦 Running: ${migration}`);
-    console.log('─'.repeat(50));
-    execSync(`node ${migration}`, { stdio: 'inherit' });
+    console.log("─".repeat(50));
+    execSync(`node ${migration}`, { stdio: "inherit" });
   } catch (error) {
     console.error(`\n❌ Failed to run ${migration}`);
     console.error(error.message);
@@ -19,5 +19,5 @@ for (const migration of migrations) {
   }
 }
 
-console.log('\n\n✅ All migrations completed successfully!');
-console.log('\n⚠️  IMPORTANT: Please restart your backend server now!\n');
+console.log("\n\n✅ All migrations completed successfully!");
+console.log("\n⚠️  IMPORTANT: Please restart your backend server now!\n");

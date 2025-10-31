@@ -25,9 +25,21 @@
         </div>
 
         <div class="form-group">
-          <label for="competition">Competition (Optional)</label>
-          <select id="competition" v-model="formData.competitionId">
-            <option value="">Practice Score (No Competition)</option>
+          <label for="scoreType">Score Type *</label>
+          <select id="scoreType" v-model="scoreType" required>
+            <option value="practice">Practice Score</option>
+            <option value="competition">Competition Score</option>
+          </select>
+        </div>
+
+        <div v-if="scoreType === 'competition'" class="form-group">
+          <label for="competition">Select Competition *</label>
+          <select 
+            id="competition" 
+            v-model="formData.competitionId"
+            :required="scoreType === 'competition'"
+          >
+            <option value="">Choose a competition</option>
             <option
               v-for="comp in competitions"
               :key="comp.CompetitionID"
@@ -36,8 +48,11 @@
               {{ comp.Name }} - {{ formatDate(comp.Date) }}
             </option>
           </select>
-          <small style="color: var(--muted-text); display: block; margin-top: 4px">
-            Leave blank if this is a practice score
+          <small
+            v-if="competitions.length === 0"
+            style="color: var(--warning); display: block; margin-top: 4px"
+          >
+            No active competitions available
           </small>
         </div>
 
@@ -156,6 +171,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useMetadataStore } from "@/stores/metadata";
 import { useScoreStore } from "@/stores/scores";
+import api from "@/services/api";
 
 const router = useRouter();
 const metadataStore = useMetadataStore();
@@ -168,6 +184,7 @@ const roundDetails = ref(null);
 const loading = ref(false);
 const error = ref("");
 const success = ref(false);
+const scoreType = ref("practice"); // Default to practice
 
 const formData = ref({
   roundId: "",
@@ -190,13 +207,24 @@ onMounted(async () => {
 
 async function loadCompetitions() {
   try {
-    const response = await scoreStore.api.get("/competitions", {
-      params: { limit: 100 }
+    const response = await api.get("/competitions", {
+      params: { limit: 100 },
     });
-    // Filter for upcoming and ongoing competitions only
-    competitions.value = response.data.competitions.filter(c => 
-      c.Status === 'upcoming' || c.Status === 'ongoing' || c.Status === 'active'
+    
+    console.log('All competitions:', response.data.competitions);
+    
+    // Filter for upcoming, active, and ongoing competitions
+    competitions.value = response.data.competitions.filter(
+      (c) => {
+        const isValid = c.Status === "upcoming" || 
+                       c.Status === "ongoing" || 
+                       c.Status === "active";
+        console.log(`Competition ${c.Name}: Status=${c.Status}, Valid=${isValid}`);
+        return isValid;
+      }
     );
+    
+    console.log('Filtered competitions:', competitions.value);
   } catch (err) {
     console.error("Failed to load competitions:", err);
   }
@@ -244,16 +272,20 @@ async function handleSubmit() {
   success.value = false;
 
   try {
+    // Clear competitionId if practice score
+    if (scoreType.value === "practice") {
+      formData.value.competitionId = "";
+    }
+    
     await scoreStore.createScore(formData.value);
     success.value = true;
-    
-    const scoreType = formData.value.competitionId ? "competition" : "practice";
-    const message = formData.value.competitionId 
+
+    const message = scoreType.value === "competition"
       ? "Competition score saved successfully! It will be reviewed by a recorder."
       : "Practice score saved successfully!";
-    
+
     alert(message);
-    
+
     setTimeout(() => {
       router.push("/archer/scores");
     }, 1500);
@@ -265,11 +297,11 @@ async function handleSubmit() {
 }
 
 function formatDate(date) {
-  if (!date) return '';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+  if (!date) return "";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 }
 </script>

@@ -82,7 +82,13 @@
             <td>{{ score.round.Name }}</td>
             <td>{{ score.division?.Name || "N/A" }}</td>
             <td>
-              <span :class="score.EquipmentUsed !== score.division?.Name ? 'equipment-mismatch' : ''">
+              <span
+                :class="
+                  score.EquipmentUsed !== score.division?.Name
+                    ? 'equipment-mismatch'
+                    : ''
+                "
+              >
                 {{ score.EquipmentUsed || score.division?.Name || "N/A" }}
               </span>
             </td>

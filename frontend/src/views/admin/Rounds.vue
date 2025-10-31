@@ -381,18 +381,37 @@ async function saveRound() {
   formError.value = "";
 
   try {
+    console.log('Form data before mapping:', formData.value);
+    console.log('Ranges is array?', Array.isArray(formData.value.ranges));
+    console.log('Ranges length:', formData.value.ranges?.length);
+    console.log('Ranges content:', formData.value.ranges);
+    
+    // Ensure ranges is an array
+    if (!Array.isArray(formData.value.ranges) || formData.value.ranges.length === 0) {
+      formError.value = "At least one range is required";
+      formLoading.value = false;
+      return;
+    }
+    
+    // Map ranges to plain objects (not reactive)
+    const mappedRanges = formData.value.ranges.map((r) => ({
+      distance: Number(r.distance),
+      unit: String(r.unit),
+      targetSize: Number(r.targetSize),
+      scoringType: String(r.scoringType),
+      numEnds: Number(r.numEnds),
+      arrowsPerEnd: Number(r.arrowsPerEnd),
+    }));
+    
     const payload = {
       name: formData.value.name,
       description: formData.value.description,
-      ranges: formData.value.ranges.map((r) => ({
-        distance: r.distance,
-        unit: r.unit,
-        targetSize: r.targetSize,
-        scoringType: r.scoringType,
-        numEnds: r.numEnds,
-        arrowsPerEnd: r.arrowsPerEnd,
-      })),
+      ranges: mappedRanges,
     };
+
+    console.log('Payload to send:', JSON.stringify(payload, null, 2));
+    console.log('Payload ranges type:', typeof payload.ranges);
+    console.log('Payload ranges is array?', Array.isArray(payload.ranges));
 
     if (isEditMode.value) {
       await api.put(`/rounds/${selectedRound.value.RoundID}`, payload);
@@ -403,8 +422,10 @@ async function saveRound() {
     await loadRounds();
     closeFormModal();
   } catch (err) {
+    console.error('Save round error:', err);
     formError.value =
       err.response?.data?.error ||
+      err.response?.data?.details ||
       `Failed to ${isEditMode.value ? "update" : "create"} round`;
   } finally {
     formLoading.value = false;

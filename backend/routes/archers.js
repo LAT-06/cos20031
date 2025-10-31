@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const archerController = require("../controllers/archerController");
+const roundController = require("../controllers/roundController");
 const { auth } = require("../middleware/auth");
 const roleCheck = require("../middleware/roleCheck");
 
@@ -14,6 +15,7 @@ router.get(
 router.get("/:id", auth, archerController.getArcherById);
 router.get("/:id/scores", auth, archerController.getArcherScores);
 router.get("/:id/personal-bests", auth, archerController.getPersonalBests);
+router.get("/:id/eligible-rounds", auth, roundController.getEligibleRounds);
 
 // Admin only routes
 router.post("/", auth, roleCheck("admin"), archerController.createArcher);

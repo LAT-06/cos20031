@@ -98,6 +98,17 @@
               <label>Round:</label>
               <span>{{ selectedCompetition.round?.Name || "N/A" }}</span>
             </div>
+            <div v-if="selectedCompetition.round?.ranges && selectedCompetition.round.ranges.length > 0" class="detail-item" style="grid-column: 1 / -1">
+              <label>Round Details:</label>
+              <div style="margin-top:8px">
+                <div v-for="range in selectedCompetition.round.ranges" :key="range.RoundRangeID" style="padding:8px 0; border-bottom:1px dashed var(--muted);">
+                  <div><strong>Range {{ range.RangeNo }}:</strong></div>
+                  <div style="font-size:0.95rem; color:#ffffff;">
+                    Distance: {{ range.Distance }}m • Target: {{ range.TargetFace }} • Ends: {{ range.Ends }} • Scoring: {{ range.ScoringType || 'N/A' }} • Arrows/end: {{ range.ArrowsPerEnd || 'N/A' }}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="detail-item">
               <label>Status:</label>
               <span :class="`badge badge-${selectedCompetition.Status}`">

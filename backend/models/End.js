@@ -13,6 +13,11 @@ const End = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    RoundRangeID: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: "Links to specific range within the round",
+    },
     EndNumber: {
       type: DataTypes.INTEGER,
       allowNull: false,

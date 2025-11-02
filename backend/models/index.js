@@ -99,6 +99,8 @@ ScoreRecord.hasMany(End, {
   onDelete: "CASCADE",
 });
 End.belongsTo(ScoreRecord, { foreignKey: "ScoreRecordID", as: "scoreRecord" });
+End.belongsTo(RoundRange, { foreignKey: "RoundRangeID", as: "roundRange" });
+RoundRange.hasMany(End, { foreignKey: "RoundRangeID", as: "ends" });
 
 // Arrow associations
 End.hasMany(Arrow, { foreignKey: "EndID", as: "arrows", onDelete: "CASCADE" });

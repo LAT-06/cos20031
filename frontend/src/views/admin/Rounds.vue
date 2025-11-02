@@ -89,23 +89,22 @@
               :key="range.RoundRangeID"
               class="range-card"
             >
-              <h4>Range {{ index + 1 }}</h4>
+              <h4>Range {{ range.RangeNo || (index + 1) }}</h4>
               <div class="range-details">
                 <div>
-                  <strong>Distance:</strong> {{ range.Distance }}
-                  {{ range.Unit }}
+                  <strong>Distance:</strong> {{ range.Distance }}m
                 </div>
                 <div>
-                  <strong>Target Size:</strong> {{ range.TargetSize }}cm
+                  <strong>Target Face:</strong> {{ range.TargetFace }}
                 </div>
-                <div><strong>Scoring:</strong> {{ range.ScoringType }}</div>
-                <div><strong>Ends:</strong> {{ range.NumEnds }}</div>
+                <div><strong>Scoring:</strong> {{ range.ScoringType || '10-zone' }}</div>
+                <div><strong>Ends:</strong> {{ range.Ends }}</div>
                 <div>
-                  <strong>Arrows per End:</strong> {{ range.ArrowsPerEnd }}
+                  <strong>Arrows per End:</strong> {{ range.ArrowsPerEnd || 6 }}
                 </div>
                 <div>
                   <strong>Total Arrows:</strong>
-                  {{ range.NumEnds * range.ArrowsPerEnd }}
+                  {{ range.Ends * (range.ArrowsPerEnd || 6) }}
                 </div>
               </div>
             </div>
@@ -343,6 +342,8 @@ function openAddModal() {
 }
 
 function viewRound(round) {
+  console.log('Viewing round:', round);
+  console.log('Round ranges:', round.ranges);
   selectedRound.value = round;
   showViewModal.value = true;
 }
@@ -350,17 +351,26 @@ function viewRound(round) {
 function editRound(round) {
   isEditMode.value = true;
   selectedRound.value = round;
+  
+  console.log('Editing round:', round);
+  console.log('Round ranges:', round.ranges);
+  
   formData.value = {
     name: round.Name,
     description: round.Description || "",
-    ranges: round.ranges?.map((r) => ({
-      distance: r.Distance,
-      unit: r.Unit,
-      targetSize: r.TargetSize,
-      scoringType: r.ScoringType,
-      numEnds: r.NumEnds,
-      arrowsPerEnd: r.ArrowsPerEnd,
-    })) || [
+    ranges: round.ranges?.map((r) => {
+      // Extract target size from TargetFace (e.g., "122cm" -> 122)
+      const targetSize = parseInt(r.TargetFace) || 122;
+      
+      return {
+        distance: r.Distance,
+        unit: "meters", // Default since backend doesn't store unit
+        targetSize: targetSize,
+        scoringType: r.ScoringType || "10-zone",
+        numEnds: r.Ends, // Backend uses 'Ends' not 'NumEnds'
+        arrowsPerEnd: r.ArrowsPerEnd || 6,
+      };
+    }) || [
       {
         distance: 70,
         unit: "meters",

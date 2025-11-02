@@ -33,6 +33,8 @@ exports.getAllRounds = async (req, res) => {
             "Distance",
             "Ends",
             "TargetFace",
+            "ScoringType",
+            "ArrowsPerEnd",
           ],
         },
       ],
@@ -127,6 +129,8 @@ exports.createRound = async (req, res) => {
         const distance = range.distance;
         const ends = range.numEnds || range.ends;
         const targetFace = range.targetSize ? `${range.targetSize}cm` : (range.targetFace || '122cm');
+        const scoringType = range.scoringType || '10-zone';
+        const arrowsPerEnd = range.arrowsPerEnd || 6;
         
         // Validate range data
         if (!distance || !ends) {
@@ -142,6 +146,8 @@ exports.createRound = async (req, res) => {
           Distance: distance,
           Ends: ends,
           TargetFace: targetFace,
+          ScoringType: scoringType,
+          ArrowsPerEnd: arrowsPerEnd,
         });
       }
       console.log('All ranges created successfully');
@@ -207,6 +213,8 @@ exports.updateRound = async (req, res) => {
         const distance = range.distance;
         const ends = range.numEnds || range.ends;
         const targetFace = range.targetSize ? `${range.targetSize}cm` : (range.targetFace || '122cm');
+        const scoringType = range.scoringType || '10-zone';
+        const arrowsPerEnd = range.arrowsPerEnd || 6;
         
         await RoundRange.create({
           RoundID: id,
@@ -214,6 +222,8 @@ exports.updateRound = async (req, res) => {
           Distance: distance,
           Ends: ends,
           TargetFace: targetFace,
+          ScoringType: scoringType,
+          ArrowsPerEnd: arrowsPerEnd,
         });
       }
     }

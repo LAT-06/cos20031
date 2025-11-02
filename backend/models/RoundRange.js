@@ -37,6 +37,22 @@ const RoundRange = sequelize.define(
       allowNull: false,
       comment: "e.g., 80cm, 122cm",
     },
+    ScoringType: {
+      type: DataTypes.ENUM("10-zone", "5-zone", "X-ring", "Imperial"),
+      allowNull: false,
+      defaultValue: "10-zone",
+      comment: "Scoring system for this range",
+    },
+    ArrowsPerEnd: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 6,
+      validate: {
+        min: 1,
+        max: 12,
+      },
+      comment: "Number of arrows per end",
+    },
   },
   {
     tableName: "RoundRange",

@@ -22,6 +22,28 @@ exports.getAllChampionships = async (req, res) => {
           model: Competition,
           as: "competitions",
           through: { attributes: [] },
+          include: [
+            {
+              model: Round,
+              as: "round",
+              attributes: ["RoundID", "Name", "Description"],
+              include: [
+                {
+                  model: require("../models").RoundRange,
+                  as: "ranges",
+                  attributes: [
+                    "RoundRangeID",
+                    "RangeNo",
+                    "Distance",
+                    "Ends",
+                    "TargetFace",
+                    "ScoringType",
+                    "ArrowsPerEnd",
+                  ],
+                },
+              ],
+            },
+          ],
         },
       ],
       order: [["Year", "DESC"]],
@@ -60,8 +82,48 @@ exports.getChampionshipById = async (req, res) => {
                   attributes: ["ArcherID", "FirstName", "LastName"],
                   include: [{ model: Class, as: "class" }],
                 },
-                { model: Round, as: "round" },
+                {
+                  model: Round,
+                  as: "round",
+                  attributes: ["RoundID", "Name", "Description"],
+                  include: [
+                    {
+                      model: require("../models").RoundRange,
+                      as: "ranges",
+                      attributes: [
+                        "RoundRangeID",
+                        "RangeNo",
+                        "Distance",
+                        "Ends",
+                        "TargetFace",
+                        "ScoringType",
+                        "ArrowsPerEnd",
+                      ],
+                    },
+                  ],
+                },
                 { model: Division, as: "division" },
+              ],
+            },
+            // also include competition's configured round
+            {
+              model: Round,
+              as: "round",
+              attributes: ["RoundID", "Name", "Description"],
+              include: [
+                {
+                  model: require("../models").RoundRange,
+                  as: "ranges",
+                  attributes: [
+                    "RoundRangeID",
+                    "RangeNo",
+                    "Distance",
+                    "Ends",
+                    "TargetFace",
+                    "ScoringType",
+                    "ArrowsPerEnd",
+                  ],
+                },
               ],
             },
           ],

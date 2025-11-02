@@ -130,9 +130,15 @@
                   <span class="separator">•</span>
                   <span>{{ comp.Location || "N/A" }}</span>
                   <span class="separator">•</span>
-                  <span :class="`badge badge-${comp.Status}`">{{
-                    comp.Status
-                  }}</span>
+                  <span :class="`badge badge-${comp.Status}`">{{ comp.Status }}</span>
+                </div>
+                <div v-if="comp.round?.ranges && comp.round.ranges.length > 0" class="comp-round-details" style="margin-top:8px">
+                  <small style="color:var(--muted-text)">Round: {{ comp.round.Name }}</small>
+                  <div style="margin-top:6px">
+                    <div v-for="r in comp.round.ranges" :key="r.RoundRangeID" style="font-size:0.9rem; color:var(--muted-text)">
+                      Range {{ r.RangeNo }} — {{ r.Distance }}m • {{ r.TargetFace }} • {{ r.Ends }} ends • {{ r.ScoringType || 'N/A' }} • {{ r.ArrowsPerEnd || 'N/A' }} arrows/end
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

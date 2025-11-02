@@ -37,7 +37,22 @@ exports.getAllCompetitions = async (req, res) => {
         {
           model: Round,
           as: "round",
-          attributes: ["RoundID", "Name"],
+          attributes: ["RoundID", "Name", "Description"],
+          include: [
+            {
+              model: require("../models").RoundRange,
+              as: "ranges",
+              attributes: [
+                "RoundRangeID",
+                "RangeNo",
+                "Distance",
+                "Ends",
+                "TargetFace",
+                "ScoringType",
+                "ArrowsPerEnd",
+              ],
+            },
+          ],
         },
       ],
       order: [["Date", "DESC"]],
@@ -73,8 +88,48 @@ exports.getCompetitionById = async (req, res) => {
               attributes: ["ArcherID", "FirstName", "LastName", "ClassID"],
               include: [{ model: Class, as: "class" }],
             },
-            { model: Round, as: "round" },
+            {
+              model: Round,
+              as: "round",
+              attributes: ["RoundID", "Name", "Description"],
+              include: [
+                {
+                  model: require("../models").RoundRange,
+                  as: "ranges",
+                  attributes: [
+                    "RoundRangeID",
+                    "RangeNo",
+                    "Distance",
+                    "Ends",
+                    "TargetFace",
+                    "ScoringType",
+                    "ArrowsPerEnd",
+                  ],
+                },
+              ],
+            },
             { model: Division, as: "division" },
+          ],
+        },
+        // Also include the competition's configured round (if any) with ranges
+        {
+          model: Round,
+          as: "round",
+          attributes: ["RoundID", "Name", "Description"],
+          include: [
+            {
+              model: require("../models").RoundRange,
+              as: "ranges",
+              attributes: [
+                "RoundRangeID",
+                "RangeNo",
+                "Distance",
+                "Ends",
+                "TargetFace",
+                "ScoringType",
+                "ArrowsPerEnd",
+              ],
+            },
           ],
         },
       ],

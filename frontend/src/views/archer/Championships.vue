@@ -84,8 +84,16 @@
                 :key="comp.CompetitionID"
                 class="competition-item"
               >
-                <strong>{{ comp.Name }}</strong>
-                <span>{{ formatDate(comp.Date) }}</span>
+                <div style="display:flex; flex-direction:column; gap:4px">
+                  <strong>{{ comp.Name }}</strong>
+                  <span style="color:var(--muted-text)">{{ formatDate(comp.Date) }}</span>
+                  <span v-if="comp.round?.ranges && comp.round.ranges.length > 0" style="color:var(--muted-text); font-size:0.95rem; margin-top:6px">
+                    Round: {{ comp.round.Name }} —
+                    <span v-for="(r, i) in comp.round.ranges" :key="r.RoundRangeID">
+                      {{ r.Distance }}m/{{ r.TargetFace }}/{{ r.Ends }}e/{{ r.ScoringType || 'N/A' }}/{{ r.ArrowsPerEnd || 'N/A' }}<span v-if="i < comp.round.ranges.length -1"> • </span>
+                    </span>
+                  </span>
+                </div>
               </div>
             </div>
             <p v-else style="color: var(--muted-text)">

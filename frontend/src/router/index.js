@@ -42,7 +42,7 @@ const routes = [
         path: "equivalent-rounds",
         name: "AdminEquivalentRounds",
         component: () => import("@/views/admin/EquivalentRounds.vue"),
-      }
+      },
       {
         path: "competitions",
         name: "AdminCompetitions",

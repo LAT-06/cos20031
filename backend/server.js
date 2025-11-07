@@ -65,7 +65,7 @@ async function startServer() {
     // console.log('✅ Database models synchronized');
 
     // Start server
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
       console.log(`📍 API URL: http://localhost:${PORT}/api`);
       console.log(`🏥 Health check: http://localhost:${PORT}/health`);
@@ -76,12 +76,44 @@ async function startServer() {
         `\n⚠️  Remember to run 'npm run seed' if this is a fresh database!`
       );
     });
+    return server;
   } catch (error) {
     console.error("❌ Unable to start server:", error);
     process.exit(1);
   }
 }
 
-startServer();
-
 module.exports = app;
+
+// Only start the server if this file is run directly (not imported as a module)
+if (require.main === module) {
+  // Database connection and server start
+  async function startServer() {
+    try {
+      // Test database connection
+      await sequelize.authenticate();
+      console.log("✅ Database connection established successfully");
+
+      // Sync models (use { alter: true } in development, avoid in production)
+      // await sequelize.sync({ alter: true });
+      // console.log('✅ Database models synchronized');
+
+      // Start server
+      app.listen(PORT, () => {
+        console.log(`🚀 Server is running on port ${PORT}`);
+        console.log(`📍 API URL: http://localhost:${PORT}/api`);
+        console.log(`🏥 Health check: http://localhost:${PORT}/health`);
+        console.log(`\n🔐 Default Admin Credentials:`);
+        console.log(`   Email: admin@archery.club`);
+        console.log(`   Password: admin123`);
+        console.log(
+          `\n⚠️  Remember to run 'npm run seed' if this is a fresh database!`
+        );
+      });
+    } catch (error) {
+      console.error("❌ Unable to start server:", error);
+      process.exit(1);
+    }
+  }
+  startServer();
+}

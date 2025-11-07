@@ -167,6 +167,9 @@ Authorization: Bearer <your_jwt_token>
 | DELETE | `/:id`            | Delete round           | Admin           |
 | GET    | `/:id/equivalent` | Get equivalent rounds  | Authenticated   |
 | POST   | `/equivalent`     | Create equivalent rule | Admin           |
+| PUT    | `/equivalent/:id` | Update equivalent rule | Admin           |
+| DELETE | `/equivalent/:id` | Delete equivalent rule | Admin           |
+| GET    | `/eligible/:archerId` | Get eligible rounds for archer | Authenticated |
 
 **Create Round Request:**
 

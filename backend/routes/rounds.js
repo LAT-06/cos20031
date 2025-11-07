@@ -26,6 +26,12 @@ router.put(
 
 // Admin only
 router.delete("/:id", auth, roleCheck("admin"), roundController.deleteRound);
+router.get(
+  "/equivalent",
+  auth,
+  roleCheck("admin"),
+  roundController.listEquivalentRounds
+);
 router.post(
   "/equivalent",
   auth,

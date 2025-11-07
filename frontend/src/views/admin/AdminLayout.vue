@@ -13,6 +13,7 @@
           <li><router-link to="/admin/archers">Archers</router-link></li>
           <li><router-link to="/admin/scores">Scores</router-link></li>
           <li><router-link to="/admin/rounds">Rounds</router-link></li>
+          <li><router-link to="/admin/equivalent-rounds">Equivalent Rounds</router-link></li>
           <li>
             <router-link to="/admin/competitions">Competitions</router-link>
           </li>

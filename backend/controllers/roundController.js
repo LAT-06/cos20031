@@ -271,6 +271,31 @@ exports.deleteRound = async (req, res) => {
 };
 
 /**
+ * List equivalent round rules (admin, optional filters)
+ */
+exports.listEquivalentRounds = async (req, res) => {
+  try {
+    const { categoryId, baseRoundId } = req.query;
+    const where = {};
+    if (categoryId) where.CategoryID = categoryId;
+    if (baseRoundId) where.BaseRoundID = baseRoundId;
+    const equivalents = await EquivalentRound.findAll({
+      where,
+      include: [
+        { model: Round, as: "baseRound" },
+        { model: Round, as: "equivalentRound" },
+        { model: Category, as: "category", include: [{ model: Class, as: "class" }, { model: Division, as: "division" }] },
+      ],
+      order: [["StartDate", "DESC"]],
+    });
+    res.json({ equivalents });
+  } catch (error) {
+    console.error("List equivalent rounds error:", error);
+    res.status(500).json({ error: "Failed to list equivalent rounds" });
+  }
+};
+
+/**
  * Get equivalent rounds for a category and date
  */
 exports.getEquivalentRounds = async (req, res) => {

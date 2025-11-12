@@ -37,6 +37,12 @@ exports.getAllRounds = async (req, res) => {
             "ArrowsPerEnd",
           ],
         },
+        {
+          model: Class,
+          as: "refClass",
+          attributes: ["ClassID", "Name"],
+          required: false,
+        },
       ],
       order: [
         ["Name", "ASC"],
@@ -110,11 +116,13 @@ exports.createRound = async (req, res) => {
     console.log('Type of ranges:', typeof req.body.ranges);
     console.log('Is ranges array?', Array.isArray(req.body.ranges));
     
-    const { name, description, ranges } = req.body;
+    const { name, description, equipment, classRefId, ranges } = req.body;
 
     console.log('Creating round with data:', {
       name,
       description,
+      equipment,
+      classRefId,
       ranges: ranges,
       rangesType: typeof ranges,
       rangesIsArray: Array.isArray(ranges)
@@ -135,6 +143,8 @@ exports.createRound = async (req, res) => {
     const round = await Round.create({
       Name: name,
       Description: description || null,
+      Equipment: equipment || null,
+      ClassRefID: classRefId || null,
     });
 
     console.log('Round created with ID:', round.RoundID);
@@ -209,7 +219,7 @@ exports.createRound = async (req, res) => {
 exports.updateRound = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, ranges } = req.body;
+    const { name, description, equipment, classRefId, ranges } = req.body;
 
     const round = await Round.findByPk(id);
     if (!round) {
@@ -219,6 +229,8 @@ exports.updateRound = async (req, res) => {
     // Update basic info
     if (name) round.Name = name;
     if (description !== undefined) round.Description = description;
+    if (equipment !== undefined) round.Equipment = equipment || null;
+    if (classRefId !== undefined) round.ClassRefID = classRefId || null;
     await round.save();
 
     // Update ranges if provided
@@ -499,89 +511,69 @@ exports.getEligibleRounds = async (req, res) => {
       });
     }
 
-    // Get all categories for this archer's class & default division
-    const { Category } = require("../models");
-    const categories = await Category.findAll({
-      where: { ClassID: archer.ClassID, DivisionID: archer.DefaultDivisionID },
-    });
-
-    const categoryIds = categories.map((c) => c.CategoryID);
-
-    if (categoryIds.length === 0) {
-      return res.json({
-        archer: {
-          name: `${archer.FirstName} ${archer.LastName}`,
-          class: archer.class?.Name || "N/A",
-          division: archer.defaultDivision?.Name || "N/A",
-        },
-        eligibleRounds: [],
-        message: "No categories found for your class",
-      });
-    }
-
-    // Get all base rounds with their equivalent rounds for these categories
-    const today = new Date();
-    const equivalents = await EquivalentRound.findAll({
+    // Get eligible rounds based on ClassRefID and Equipment
+    // A round is eligible if:
+    // 1. ClassRefID is NULL (all classes) OR ClassRefID matches archer's ClassID
+    // 2. Equipment is NULL (all equipment) OR Equipment matches archer's division name
+    const divisionName = archer.defaultDivision?.Name || "";
+    
+    const rounds = await Round.findAll({
       where: {
-        CategoryID: { [Op.in]: categoryIds },
-        StartDate: { [Op.lte]: today },
-        [Op.or]: [
-          { EndDate: null },
-          { EndDate: { [Op.gte]: today } },
-        ],
+        [Op.and]: [
+          // ClassRefID filter
+          {
+            [Op.or]: [
+              { ClassRefID: null },
+              { ClassRefID: archer.ClassID }
+            ]
+          },
+          // Equipment filter
+          {
+            [Op.or]: [
+              { Equipment: null },
+              { Equipment: "" },
+              { Equipment: divisionName }
+            ]
+          }
+        ]
       },
       include: [
-        { 
-          model: Round, 
-          as: "baseRound",
-          include: [{ model: RoundRange, as: "ranges" }],
+        {
+          model: RoundRange,
+          as: "ranges",
+          attributes: [
+            "RoundRangeID",
+            "RangeNo",
+            "Distance",
+            "Ends",
+            "TargetFace",
+            "ScoringType",
+            "ArrowsPerEnd",
+          ],
         },
-        { 
-          model: Round, 
-          as: "equivalentRound",
-          include: [{ model: RoundRange, as: "ranges" }],
+        {
+          model: Class,
+          as: "refClass",
+          attributes: ["ClassID", "Name"],
+          required: false,
         },
-        { model: Category, as: "category" },
+      ],
+      order: [
+        ["Name", "ASC"],
+        [{ model: RoundRange, as: "ranges" }, "RangeNo", "ASC"],
       ],
     });
-
-    // Group rounds by base round
-    const roundsMap = new Map();
-
-    equivalents.forEach((eq) => {
-      const baseRoundId = eq.BaseRoundID;
-      
-      if (!roundsMap.has(baseRoundId)) {
-        roundsMap.set(baseRoundId, {
-          baseRound: eq.baseRound,
-          equivalentRounds: [],
-          categories: new Set(),
-        });
-      }
-
-      const roundData = roundsMap.get(baseRoundId);
-      roundData.equivalentRounds.push({
-        ...eq.equivalentRound.toJSON(),
-        category: eq.category.Name,
-      });
-      roundData.categories.add(eq.category.Name);
-    });
-
-    // Format response
-    const eligibleRounds = Array.from(roundsMap.values()).map((data) => ({
-      baseRound: data.baseRound,
-      equivalentRounds: data.equivalentRounds,
-      categories: Array.from(data.categories),
-    }));
 
     res.json({
       archer: {
         name: `${archer.FirstName} ${archer.LastName}`,
         class: archer.class?.Name || "N/A",
         division: archer.defaultDivision?.Name || "N/A",
+        classId: archer.ClassID,
+        divisionId: archer.DefaultDivisionID,
       },
-      eligibleRounds,
-      totalRounds: eligibleRounds.length,
+      eligibleRounds: rounds,
+      message: rounds.length === 0 ? "No eligible rounds found for your class and equipment" : undefined,
     });
   } catch (error) {
     console.error("Get eligible rounds error:", error);

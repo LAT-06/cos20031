@@ -13,7 +13,7 @@
         <h3>👤 {{ archerInfo.name }}</h3>
         <p><strong>Class:</strong> {{ archerInfo.class }}</p>
         <p><strong>Division:</strong> {{ archerInfo.division }}</p>
-        <p><strong>Eligible Rounds:</strong> {{ totalRounds }} rounds available</p>
+        <p><strong>Eligible Rounds:</strong> {{ eligibleRounds.length }} rounds available</p>
       </div>
 
       <!-- No rounds message -->
@@ -21,79 +21,50 @@
         <p style="font-size: 2rem; margin-bottom: 16px">🎯</p>
         <p style="font-size: 1.2rem; margin-bottom: 8px">No eligible rounds found</p>
         <p style="color: var(--muted-text)">
-          Contact your administrator to set up equivalent rounds for your class/division
+          {{ message || 'No rounds match your class and division' }}
         </p>
       </div>
 
       <!-- Rounds List -->
       <div v-else class="rounds-container">
         <div
-          v-for="(roundGroup, index) in eligibleRounds"
-          :key="index"
-          class="round-group"
+          v-for="round in eligibleRounds"
+          :key="round.RoundID"
+          class="round-card"
         >
-          <div class="base-round">
-            <div class="round-header">
-              <h3>🎯 {{ roundGroup.baseRound.Name }}</h3>
-              <span class="category-badges">
-                <span
-                  v-for="category in roundGroup.categories"
-                  :key="category"
-                  class="category-badge"
-                >
-                  {{ category }}
-                </span>
+          <div class="round-header">
+            <h3>🎯 {{ round.Name }}</h3>
+            <div class="round-badges">
+              <span v-if="round.Equipment" class="equipment-badge">
+                {{ round.Equipment }}
+              </span>
+              <span v-if="round.refClass" class="class-badge">
+                {{ round.refClass.Name }}
+              </span>
+              <span v-else class="class-badge all">
+                All Classes
               </span>
             </div>
-            
-            <p v-if="roundGroup.baseRound.Description" class="description">
-              {{ roundGroup.baseRound.Description }}
-            </p>
-
-            <div class="ranges-info">
-              <h4>Base Round Details:</h4>
-              <div class="ranges-grid">
-                <div
-                  v-for="range in roundGroup.baseRound.ranges"
-                  :key="range.RoundRangeID"
-                  class="range-card"
-                >
-                  <span class="range-label">Range {{ range.RangeNo }}</span>
-                  <div class="range-details">
-                    <span>📏 {{ range.Distance }}m</span>
-                    <span>🎯 {{ range.TargetFace }}</span>
-                    <span>🔁 {{ range.Ends }} ends</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
+          
+          <p v-if="round.Description" class="description">
+            {{ round.Description }}
+          </p>
 
-          <!-- Equivalent Rounds -->
-          <div v-if="roundGroup.equivalentRounds.length > 0" class="equivalent-rounds">
-            <h4>✨ Alternative Equivalent Rounds:</h4>
-            <div class="equivalent-list">
+          <div class="ranges-info">
+            <h4>Round Details:</h4>
+            <div class="ranges-grid">
               <div
-                v-for="eqRound in roundGroup.equivalentRounds"
-                :key="eqRound.RoundID"
-                class="equivalent-card"
+                v-for="range in round.ranges"
+                :key="range.RoundRangeID"
+                class="range-card"
               >
-                <div class="eq-header">
-                  <strong>{{ eqRound.Name }}</strong>
-                  <span class="eq-category">{{ eqRound.category }}</span>
-                </div>
-                <p v-if="eqRound.Description" class="eq-description">
-                  {{ eqRound.Description }}
-                </p>
-                <div class="eq-ranges">
-                  <div
-                    v-for="range in eqRound.ranges"
-                    :key="range.RoundRangeID"
-                    class="eq-range"
-                  >
-                    <span>Range {{ range.RangeNo }}:</span>
-                    <span>{{ range.Distance }}m, {{ range.TargetFace }}, {{ range.Ends }} ends</span>
-                  </div>
+                <span class="range-label">Range {{ range.RangeNo }}</span>
+                <div class="range-details">
+                  <span>📏 {{ range.Distance }}m</span>
+                  <span>🎯 {{ range.TargetFace }}</span>
+                  <span>🔁 {{ range.Ends }} ends</span>
+                  <span>🏹 {{ range.ArrowsPerEnd }} arrows/end</span>
                 </div>
               </div>
             </div>
@@ -112,9 +83,9 @@ import api from "@/services/api";
 const authStore = useAuthStore();
 const loading = ref(false);
 const error = ref("");
+const message = ref("");
 const archerInfo = ref(null);
 const eligibleRounds = ref([]);
-const totalRounds = ref(0);
 
 onMounted(() => {
   loadEligibleRounds();
@@ -139,9 +110,9 @@ async function loadEligibleRounds() {
     
     archerInfo.value = response.data.archer;
     eligibleRounds.value = response.data.eligibleRounds || [];
-    totalRounds.value = response.data.totalRounds || 0;
+    message.value = response.data.message || "";
 
-    if (response.data.message) {
+    if (response.data.message && eligibleRounds.value.length === 0) {
       error.value = response.data.message;
     }
   } catch (err) {
@@ -176,19 +147,15 @@ async function loadEligibleRounds() {
 .rounds-container {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
-.round-group {
+.round-card {
   background: var(--panel);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden;
-}
-
-.base-round {
   padding: 24px;
-  background: linear-gradient(to bottom, #f8f9ff 0%, white 100%);
+  border-left: 4px solid var(--brand);
 }
 
 .round-header {
@@ -206,19 +173,34 @@ async function loadEligibleRounds() {
   font-size: 1.5rem;
 }
 
-.category-badges {
+.round-badges {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
-.category-badge {
-  background: #667eea;
+.equipment-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 16px;
   font-size: 0.85rem;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.class-badge {
+  background: #10b981;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.class-badge.all {
+  background: #6b7280;
 }
 
 .description {
@@ -262,85 +244,6 @@ async function loadEligibleRounds() {
   font-size: 0.95rem;
 }
 
-.equivalent-rounds {
-  padding: 24px;
-  background: var(--muted);
-  border-top: 3px solid #667eea;
-}
-
-.equivalent-rounds h4 {
-  margin: 0 0 16px;
-  color: #667eea;
-  font-size: 1.2rem;
-}
-
-.equivalent-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-}
-
-.equivalent-card {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: var(--soft-shadow);
-  border-left: 4px solid #667eea;
-}
-
-.eq-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  gap: 12px;
-}
-
-.eq-header strong {
-  color: var(--brand);
-  font-size: 1.1rem;
-}
-
-.eq-category {
-  background: #e8ecff;
-  color: #667eea;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.eq-description {
-  color: var(--muted-text);
-  font-size: 0.9rem;
-  margin-bottom: 12px;
-  font-style: italic;
-}
-
-.eq-ranges {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.9rem;
-}
-
-.eq-range {
-  display: flex;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--muted);
-}
-
-.eq-range:last-child {
-  border-bottom: none;
-}
-
-.eq-range span:first-child {
-  font-weight: 600;
-  min-width: 80px;
-}
-
 .empty-state {
   text-align: center;
   padding: 80px 20px;
@@ -369,8 +272,7 @@ async function loadEligibleRounds() {
     align-items: flex-start;
   }
 
-  .ranges-grid,
-  .equivalent-list {
+  .ranges-grid {
     grid-template-columns: 1fr;
   }
 }

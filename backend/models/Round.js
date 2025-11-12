@@ -22,6 +22,15 @@ const Round = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: true,
     },
+    ClassRefID: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Class',
+        key: 'ClassID'
+      },
+      comment: 'Reference class for eligible rounds - NULL means all classes'
+    },
     CreatedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

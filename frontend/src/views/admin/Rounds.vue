@@ -82,6 +82,10 @@
             <label>Equipment Allowed:</label>
             <span class="equipment-badge">{{ selectedRound.Equipment }}</span>
           </div>
+          <div v-if="selectedRound.refClass" class="detail-item" style="margin-top: 16px">
+            <label>Eligible for Class:</label>
+            <span class="equipment-badge">{{ selectedRound.refClass.Name }}</span>
+          </div>
 
           <div
             v-if="selectedRound.ranges && selectedRound.ranges.length > 0"
@@ -164,6 +168,16 @@
                 <option value="Barebow">Barebow</option>
                 <option value="Longbow">Longbow</option>
                 <option value="Traditional">Traditional</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="classRefId">Eligible for Class</label>
+              <select id="classRefId" v-model="formData.classRefId">
+                <option value="">All Classes</option>
+                <option v-for="cls in classes" :key="cls.ClassID" :value="cls.ClassID">
+                  {{ cls.Name }}
+                </option>
               </select>
             </div>
 
@@ -291,6 +305,7 @@ const rounds = ref([]);
 const loading = ref(false);
 const error = ref("");
 const searchTerm = ref("");
+const classes = ref([]);
 
 // Modals
 const showViewModal = ref(false);
@@ -318,6 +333,7 @@ const formError = ref("");
 
 onMounted(() => {
   loadRounds();
+  loadClasses();
 });
 
 async function loadRounds() {
@@ -337,12 +353,22 @@ async function loadRounds() {
   }
 }
 
+async function loadClasses() {
+  try {
+    const response = await api.get("/classes");
+    classes.value = response.data.classes;
+  } catch (err) {
+    console.error("Failed to load classes:", err);
+  }
+}
+
 function openAddModal() {
   isEditMode.value = false;
   formData.value = {
     name: "",
     description: "",
     equipment: "",
+    classRefId: "",
     ranges: [
       {
         distance: 70,
@@ -376,6 +402,7 @@ function editRound(round) {
     name: round.Name,
     description: round.Description || "",
     equipment: round.Equipment || "",
+    classRefId: round.ClassRefID || "",
     ranges: round.ranges?.map((r) => {
       // Extract target size from TargetFace (e.g., "122cm" -> 122)
       const targetSize = parseInt(r.TargetFace) || 122;
@@ -435,6 +462,7 @@ async function saveRound() {
       name: formData.value.name,
       description: formData.value.description,
       equipment: formData.value.equipment || null,
+      classRefId: formData.value.classRefId || null,
       ranges: mappedRanges,
     };
 

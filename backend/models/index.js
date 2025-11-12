@@ -41,6 +41,10 @@ Round.hasMany(RoundRange, {
 });
 RoundRange.belongsTo(Round, { foreignKey: "RoundID", as: "round" });
 
+// Round-Class relationship (for eligible rounds)
+Round.belongsTo(Class, { foreignKey: "ClassRefID", as: "refClass" });
+Class.hasMany(Round, { foreignKey: "ClassRefID", as: "eligibleRounds" });
+
 // EquivalentRound associations
 EquivalentRound.belongsTo(Round, {
   foreignKey: "BaseRoundID",

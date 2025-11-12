@@ -7,6 +7,7 @@ const roleCheck = require("../middleware/roleCheck");
 // Public routes (authenticated users)
 router.get("/", auth, roundController.getAllRounds);
 router.get("/:id", auth, roundController.getRoundById);
+router.get("/:id/equipment", auth, roundController.getRoundEquipment);
 router.get("/:id/equivalent", auth, roundController.getEquivalentRounds);
 router.get("/eligible/:archerId", auth, roundController.getEligibleRounds);
 

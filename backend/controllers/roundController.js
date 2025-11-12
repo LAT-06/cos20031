@@ -80,6 +80,28 @@ exports.getRoundById = async (req, res) => {
 };
 
 /**
+ * Get equipment for a round
+ */
+exports.getRoundEquipment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const round = await Round.findByPk(id, {
+      attributes: ["Equipment"],
+    });
+
+    if (!round) {
+      return res.status(404).json({ error: "Round not found" });
+    }
+
+    res.json({ equipment: round.Equipment });
+  } catch (error) {
+    console.error("Get round equipment error:", error);
+    res.status(500).json({ error: "Failed to fetch round equipment" });
+  }
+};
+
+/**
  * Create round (admin/recorder)
  */
 exports.createRound = async (req, res) => {

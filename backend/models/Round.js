@@ -18,6 +18,10 @@ const Round = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    Equipment: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+    },
     CreatedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

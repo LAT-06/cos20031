@@ -8,6 +8,7 @@ const roleCheck = require("../middleware/roleCheck");
 router.get("/", auth, roundController.getAllRounds);
 router.get("/:id", auth, roundController.getRoundById);
 router.get("/:id/equivalent", auth, roundController.getEquivalentRounds);
+router.get("/eligible/:archerId", auth, roundController.getEligibleRounds);
 
 // Admin/Recorder routes
 router.post(
@@ -25,11 +26,29 @@ router.put(
 
 // Admin only
 router.delete("/:id", auth, roleCheck("admin"), roundController.deleteRound);
+router.get(
+  "/equivalent",
+  auth,
+  roleCheck("admin"),
+  roundController.listEquivalentRounds
+);
 router.post(
   "/equivalent",
   auth,
   roleCheck("admin"),
   roundController.createEquivalentRound
+);
+router.put(
+  "/equivalent/:id",
+  auth,
+  roleCheck("admin"),
+  roundController.updateEquivalentRound
+);
+router.delete(
+  "/equivalent/:id",
+  auth,
+  roleCheck("admin"),
+  roundController.deleteEquivalentRound
 );
 
 module.exports = router;

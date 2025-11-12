@@ -166,7 +166,11 @@ Authorization: Bearer <your_jwt_token>
 | PUT    | `/:id`            | Update round           | Admin, Recorder |
 | DELETE | `/:id`            | Delete round           | Admin           |
 | GET    | `/:id/equivalent` | Get equivalent rounds  | Authenticated   |
+| GET    | `/equivalent`     | List equivalent rules  | Admin           |
 | POST   | `/equivalent`     | Create equivalent rule | Admin           |
+| PUT    | `/equivalent/:id` | Update equivalent rule | Admin           |
+| DELETE | `/equivalent/:id` | Delete equivalent rule | Admin           |
+| GET    | `/eligible/:archerId` | Get eligible rounds for archer | Authenticated |
 
 **Create Round Request:**
 

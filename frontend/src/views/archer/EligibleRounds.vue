@@ -2,7 +2,7 @@
   <main>
     <h1>Eligible Rounds</h1>
     <p style="color: var(--muted-text); margin-bottom: 24px">
-      View rounds you are eligible to shoot based on your class
+      View rounds you are eligible to shoot based on your class and division
     </p>
 
     <div v-if="loading" class="loading">Loading eligible rounds...</div>
@@ -12,6 +12,7 @@
       <div class="info-card" v-if="archerInfo">
         <h3>👤 {{ archerInfo.name }}</h3>
         <p><strong>Class:</strong> {{ archerInfo.class }}</p>
+        <p><strong>Division:</strong> {{ archerInfo.division }}</p>
         <p><strong>Eligible Rounds:</strong> {{ totalRounds }} rounds available</p>
       </div>
 
@@ -20,7 +21,7 @@
         <p style="font-size: 2rem; margin-bottom: 16px">🎯</p>
         <p style="font-size: 1.2rem; margin-bottom: 8px">No eligible rounds found</p>
         <p style="color: var(--muted-text)">
-          Contact your administrator to set up equivalent rounds for your class
+          Contact your administrator to set up equivalent rounds for your class/division
         </p>
       </div>
 

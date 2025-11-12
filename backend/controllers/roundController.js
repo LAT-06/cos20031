@@ -271,6 +271,31 @@ exports.deleteRound = async (req, res) => {
 };
 
 /**
+ * List equivalent round rules (admin, optional filters)
+ */
+exports.listEquivalentRounds = async (req, res) => {
+  try {
+    const { categoryId, baseRoundId } = req.query;
+    const where = {};
+    if (categoryId) where.CategoryID = categoryId;
+    if (baseRoundId) where.BaseRoundID = baseRoundId;
+    const equivalents = await EquivalentRound.findAll({
+      where,
+      include: [
+        { model: Round, as: "baseRound" },
+        { model: Round, as: "equivalentRound" },
+        { model: Category, as: "category", include: [{ model: Class, as: "class" }, { model: Division, as: "division" }] },
+      ],
+      order: [["StartDate", "DESC"]],
+    });
+    res.json({ equivalents });
+  } catch (error) {
+    console.error("List equivalent rounds error:", error);
+    res.status(500).json({ error: "Failed to list equivalent rounds" });
+  }
+};
+
+/**
  * Get equivalent rounds for a category and date
  */
 exports.getEquivalentRounds = async (req, res) => {
@@ -359,16 +384,86 @@ exports.createEquivalentRound = async (req, res) => {
 };
 
 /**
+ * Update equivalent round rule (admin)
+ */
+exports.updateEquivalentRound = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { baseRoundId, equivalentRoundId, categoryId, startDate, endDate } =
+      req.body;
+
+    const equivalent = await EquivalentRound.findByPk(id);
+    if (!equivalent) {
+      return res.status(404).json({ error: "Equivalent round rule not found" });
+    }
+
+    if (baseRoundId === equivalentRoundId) {
+      return res
+        .status(400)
+        .json({ error: "Base and equivalent rounds cannot be the same" });
+    }
+
+    await equivalent.update({
+      BaseRoundID: baseRoundId,
+      EquivalentRoundID: equivalentRoundId,
+      CategoryID: categoryId,
+      StartDate: startDate,
+      EndDate: endDate || null,
+    });
+
+    const result = await EquivalentRound.findByPk(id, {
+      include: [
+        { model: Round, as: "baseRound" },
+        { model: Round, as: "equivalentRound" },
+        { model: Category, as: "category" },
+      ],
+    });
+
+    res.json({
+      message: "Equivalent round updated successfully",
+      equivalent: result,
+    });
+  } catch (error) {
+    console.error("Update equivalent round error:", error);
+    res.status(500).json({ error: "Failed to update equivalent round" });
+  }
+};
+
+/**
+ * Delete equivalent round rule (admin)
+ */
+exports.deleteEquivalentRound = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const equivalent = await EquivalentRound.findByPk(id);
+    if (!equivalent) {
+      return res.status(404).json({ error: "Equivalent round rule not found" });
+    }
+
+    await equivalent.destroy();
+
+    res.json({ message: "Equivalent round rule deleted successfully" });
+  } catch (error) {
+    console.error("Delete equivalent round error:", error);
+    res.status(500).json({ error: "Failed to delete equivalent round" });
+  }
+};
+
+/**
  * Get eligible rounds for an archer based on their class/division
  */
 exports.getEligibleRounds = async (req, res) => {
   try {
     const { archerId } = req.params;
 
-    // Get archer with their class
+    // Get archer with their class and default division
     const { Archer } = require("../models");
     const archer = await Archer.findByPk(archerId, {
-      include: [{ model: Class, as: "class" }],
+      include: [
+        { model: Class, as: "class" },
+        { model: Division, as: "defaultDivision" }
+      ],
     });
 
     if (!archer) {
@@ -382,10 +477,10 @@ exports.getEligibleRounds = async (req, res) => {
       });
     }
 
-    // Get all categories for this class
+    // Get all categories for this archer's class & default division
     const { Category } = require("../models");
     const categories = await Category.findAll({
-      where: { ClassID: archer.ClassID },
+      where: { ClassID: archer.ClassID, DivisionID: archer.DefaultDivisionID },
     });
 
     const categoryIds = categories.map((c) => c.CategoryID);
@@ -395,6 +490,7 @@ exports.getEligibleRounds = async (req, res) => {
         archer: {
           name: `${archer.FirstName} ${archer.LastName}`,
           class: archer.class?.Name || "N/A",
+          division: archer.defaultDivision?.Name || "N/A",
         },
         eligibleRounds: [],
         message: "No categories found for your class",
@@ -460,6 +556,7 @@ exports.getEligibleRounds = async (req, res) => {
       archer: {
         name: `${archer.FirstName} ${archer.LastName}`,
         class: archer.class?.Name || "N/A",
+        division: archer.defaultDivision?.Name || "N/A",
       },
       eligibleRounds,
       totalRounds: eligibleRounds.length,

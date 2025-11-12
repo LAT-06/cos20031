@@ -125,13 +125,17 @@ async function loadEligibleRounds() {
   error.value = "";
 
   try {
-    const archerId = authStore.user?.ArcherID;
+    const archerId = authStore.user?.archerId || authStore.user?.ArcherID;
+    console.log('Loading eligible rounds for archer:', archerId);
+    console.log('User object:', authStore.user);
+    
     if (!archerId) {
       error.value = "Archer ID not found";
       return;
     }
 
     const response = await api.get(`/archers/${archerId}/eligible-rounds`);
+    console.log('Eligible rounds response:', response.data);
     
     archerInfo.value = response.data.archer;
     eligibleRounds.value = response.data.eligibleRounds || [];
@@ -142,7 +146,7 @@ async function loadEligibleRounds() {
     }
   } catch (err) {
     console.error("Load eligible rounds error:", err);
-    error.value = err.message || "Failed to load eligible rounds";
+    error.value = err.response?.data?.error || err.message || "Failed to load eligible rounds";
   } finally {
     loading.value = false;
   }

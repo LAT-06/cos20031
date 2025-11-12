@@ -455,7 +455,7 @@ exports.deleteEquivalentRound = async (req, res) => {
  */
 exports.getEligibleRounds = async (req, res) => {
   try {
-    const { archerId } = req.params;
+    const archerId = req.params.id; // Route uses :id, not :archerId
 
     // Get archer with their class and default division
     const { Archer } = require("../models");

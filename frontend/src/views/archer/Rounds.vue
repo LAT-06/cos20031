@@ -184,7 +184,29 @@ async function loadRounds() {
 
   try {
     const response = await api.get("/rounds");
-    rounds.value = response.data.rounds;
+    // Calculate aggregated fields for each round
+    rounds.value = response.data.rounds.map(round => {
+      if (round.ranges && round.ranges.length > 0) {
+        let totalArrows = 0;
+        let totalEnds = 0;
+        
+        round.ranges.forEach(range => {
+          const arrowsPerEnd = range.ArrowsPerEnd || 6;
+          const ends = range.Ends || 0;
+          totalArrows += arrowsPerEnd * ends;
+          totalEnds += ends;
+        });
+        
+        return {
+          ...round,
+          TotalArrows: totalArrows,
+          NumberOfEnds: totalEnds,
+          ArrowsPerEnd: round.ranges[0]?.ArrowsPerEnd || 6,
+          MaxScore: totalArrows * 10
+        };
+      }
+      return round;
+    });
   } catch (err) {
     error.value = err.response?.data?.error || "Failed to load rounds";
   } finally {
@@ -197,6 +219,24 @@ function filterRounds() {
 }
 
 function viewRound(round) {
+  // Calculate fields from ranges if not present
+  if (round.ranges && round.ranges.length > 0) {
+    let totalArrows = 0;
+    let totalEnds = 0;
+    
+    round.ranges.forEach(range => {
+      const arrowsPerEnd = range.ArrowsPerEnd || 6;
+      const ends = range.Ends || 0;
+      totalArrows += arrowsPerEnd * ends;
+      totalEnds += ends;
+    });
+    
+    round.TotalArrows = totalArrows;
+    round.NumberOfEnds = totalEnds;
+    round.ArrowsPerEnd = round.ranges[0]?.ArrowsPerEnd || 6;
+    round.MaxScore = totalArrows * 10; // Assuming 10-zone scoring
+  }
+  
   selectedRound.value = round;
   showModal.value = true;
 }

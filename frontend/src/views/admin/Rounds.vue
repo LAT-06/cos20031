@@ -78,6 +78,10 @@
             <label>Description:</label>
             <span>{{ selectedRound.Description || "N/A" }}</span>
           </div>
+          <div v-if="selectedRound.Equipment" class="detail-item" style="margin-top: 16px">
+            <label>Equipment Allowed:</label>
+            <span class="equipment-badge">{{ selectedRound.Equipment }}</span>
+          </div>
 
           <div
             v-if="selectedRound.ranges && selectedRound.ranges.length > 0"
@@ -149,6 +153,18 @@
                 rows="3"
                 placeholder="Optional description of the round"
               ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="equipment">Equipment Allowed</label>
+              <select id="equipment" v-model="formData.equipment">
+                <option value="">All Equipment</option>
+                <option value="Recurve">Recurve</option>
+                <option value="Compound">Compound</option>
+                <option value="Barebow">Barebow</option>
+                <option value="Longbow">Longbow</option>
+                <option value="Traditional">Traditional</option>
+              </select>
             </div>
 
             <div class="ranges-form-section">
@@ -326,6 +342,7 @@ function openAddModal() {
   formData.value = {
     name: "",
     description: "",
+    equipment: "",
     ranges: [
       {
         distance: 70,
@@ -358,6 +375,7 @@ function editRound(round) {
   formData.value = {
     name: round.Name,
     description: round.Description || "",
+    equipment: round.Equipment || "",
     ranges: round.ranges?.map((r) => {
       // Extract target size from TargetFace (e.g., "122cm" -> 122)
       const targetSize = parseInt(r.TargetFace) || 122;
@@ -416,6 +434,7 @@ async function saveRound() {
     const payload = {
       name: formData.value.name,
       description: formData.value.description,
+      equipment: formData.value.equipment || null,
       ranges: mappedRanges,
     };
 
@@ -577,6 +596,17 @@ function closeFormModal() {
 .detail-item span {
   font-size: 16px;
   color: #ffffff;
+}
+
+.equipment-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .ranges-section {

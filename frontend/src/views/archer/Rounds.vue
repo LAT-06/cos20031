@@ -44,6 +44,10 @@
               <span class="label">Arrows per End:</span>
               <span class="value">{{ round.ArrowsPerEnd }}</span>
             </div>
+            <div v-if="round.Equipment" class="info-row equipment-row">
+              <span class="label">Equipment:</span>
+              <span class="value equipment-text">{{ round.Equipment }}</span>
+            </div>
             <div v-if="round.Description" class="description">
               {{ truncate(round.Description, 80) }}
             </div>
@@ -91,6 +95,14 @@
                   <label>Arrows per End:</label>
                   <span>{{ selectedRound.ArrowsPerEnd }}</span>
                 </div>
+              </div>
+            </div>
+
+            <!-- Equipment Section -->
+            <div v-if="selectedRound.Equipment" class="info-section">
+              <h3>🏹 Equipment Allowed</h3>
+              <div class="equipment-box">
+                <span class="equipment-badge">{{ selectedRound.Equipment }}</span>
               </div>
             </div>
 
@@ -362,6 +374,16 @@ function truncate(text, length) {
   font-size: 14px;
 }
 
+.equipment-row {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+}
+
+.equipment-text {
+  color: #a78bfa !important;
+  font-weight: 700 !important;
+}
+
 .description {
   margin-top: 16px;
   padding-top: 16px;
@@ -534,6 +556,24 @@ function truncate(text, length) {
   margin: 0;
   color: #cccccc;
   line-height: 1.6;
+}
+
+.equipment-box {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.equipment-badge {
+  display: inline-block;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .scoring-info {

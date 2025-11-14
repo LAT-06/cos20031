@@ -6,27 +6,8 @@ const roleCheck = require("../middleware/roleCheck");
 
 // Public routes (authenticated users)
 router.get("/", auth, roundController.getAllRounds);
-router.get("/:id", auth, roundController.getRoundById);
-router.get("/:id/equipment", auth, roundController.getRoundEquipment);
-router.get("/:id/equivalent", auth, roundController.getEquivalentRounds);
-router.get("/eligible/:archerId", auth, roundController.getEligibleRounds);
 
-// Admin/Recorder routes
-router.post(
-  "/",
-  auth,
-  roleCheck(["admin", "recorder"]),
-  roundController.createRound
-);
-router.put(
-  "/:id",
-  auth,
-  roleCheck(["admin", "recorder"]),
-  roundController.updateRound
-);
-
-// Admin only
-router.delete("/:id", auth, roleCheck("admin"), roundController.deleteRound);
+// Admin only - List all equivalent rounds (must be before /:id routes)
 router.get(
   "/equivalent",
   auth,
@@ -51,5 +32,28 @@ router.delete(
   roleCheck("admin"),
   roundController.deleteEquivalentRound
 );
+
+// Routes with :id parameter (must be after specific routes)
+router.get("/:id", auth, roundController.getRoundById);
+router.get("/:id/equipment", auth, roundController.getRoundEquipment);
+router.get("/:id/equivalent", auth, roundController.getEquivalentRounds);
+router.get("/eligible/:archerId", auth, roundController.getEligibleRounds);
+
+// Admin/Recorder routes
+router.post(
+  "/",
+  auth,
+  roleCheck(["admin", "recorder"]),
+  roundController.createRound
+);
+router.put(
+  "/:id",
+  auth,
+  roleCheck(["admin", "recorder"]),
+  roundController.updateRound
+);
+
+// Admin only
+router.delete("/:id", auth, roleCheck("admin"), roundController.deleteRound);
 
 module.exports = router;

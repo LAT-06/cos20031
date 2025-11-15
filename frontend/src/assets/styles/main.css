@@ -79,17 +79,19 @@ header nav ul li a {
   color: var(--brand);
   text-decoration: none;
   font-weight: 600;
+  transition: background 0.2s ease;
 }
 
-nav ul a:hover {
-  background: var(--muted);
+header nav ul li a:hover {
+  background: var(--muted) !important;
 }
-nav ul a.router-link-exact-active {
+
+header nav ul li a.router-link-exact-active {
   background: var(--muted);
   color: var(--brand);
 }
 
-nav ul a.router-link-active:not(.router-link-exact-active) {
+header nav ul li a.router-link-active:not(.router-link-exact-active) {
   /* Partial match - do not highlight */
   background: transparent;
 }

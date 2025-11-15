@@ -8,7 +8,7 @@
           <li>
             <router-link to="/archer/score-entry">Enter Score</router-link>
           </li>
-          <li><router-link to="/archer/scores">My Scores</router-link></li>
+          <li><router-link to="/archer/scores">Scores</router-link></li>
           <li>
             <router-link to="/archer/competitions">Competitions</router-link>
           </li>

@@ -316,7 +316,7 @@ function formatDate(dateString) {
   align-items: center;
   gap: 2rem;
   padding: 2rem;
-  background: linear-gradient(135deg, #2d5016 0%, #1e1e1e 100%);
+  background: #1e1e1e;
   border-bottom: 1px solid #444;
 }
 

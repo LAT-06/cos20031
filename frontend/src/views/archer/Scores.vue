@@ -1,11 +1,11 @@
 <template>
   <main>
-    <h1>My Scores</h1>
+    <h1>Scores</h1>
 
     <div class="stats-row" style="margin-bottom: 24px">
       <div class="stat-card">
         <h3>Total Scores</h3>
-        <p class="stat-number">{{ scores.length }}</p>
+        <p class="stat-number">{{ filteredScores.length }}</p>
       </div>
       <div class="stat-card">
         <h3>Approved</h3>
@@ -23,6 +23,14 @@
 
     <div style="margin-bottom: 24px">
       <div class="container-filter">
+        <input
+          v-model="searchName"
+          @input="filterScores"
+          type="text"
+          placeholder="Search by archer name..."
+          class="search-input"
+        />
+
         <select v-model="filterStatus" @change="loadScores">
           <option value="">All Status</option>
           <option value="staged">Staged</option>
@@ -61,10 +69,11 @@
     <div class="container-table">
       <div v-if="loading" class="loading">Loading your scores...</div>
       <div v-else-if="error" class="error-message">{{ error }}</div>
-      <table v-else-if="scores.length > 0">
+      <table v-else-if="filteredScores.length > 0">
         <thead>
           <tr>
             <th>Date</th>
+            <th>Archer</th>
             <th>Round</th>
             <th>Division</th>
             <th>Type</th>
@@ -75,8 +84,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="score in scores" :key="score.ScoreRecordID">
+          <tr v-for="score in filteredScores" :key="score.ScoreRecordID">
             <td>{{ formatDate(score.DateShot) }}</td>
+            <td>
+              <strong>{{ score.archer?.FirstName }} {{ score.archer?.LastName }}</strong>
+            </td>
             <td>{{ score.round.Name }}</td>
             <td>{{ score.division?.Name || "N/A" }}</td>
             <td>
@@ -241,19 +253,38 @@ const error = ref("");
 const filterStatus = ref("");
 const filterRound = ref("");
 const filterType = ref("");
+const searchName = ref("");
 
 const showViewModal = ref(false);
 const selectedScore = ref(null);
 const scoreDetails = ref([]);
 
+const filteredScores = computed(() => {
+  if (!searchName.value.trim()) {
+    return scores.value;
+  }
+  
+  const searchTerm = searchName.value.toLowerCase().trim();
+  
+  return scores.value.filter(score => {
+    const firstName = score.archer?.FirstName || '';
+    const lastName = score.archer?.LastName || '';
+    const fullName = `${firstName} ${lastName}`.toLowerCase();
+    
+    return fullName.includes(searchTerm) || 
+           firstName.toLowerCase().includes(searchTerm) || 
+           lastName.toLowerCase().includes(searchTerm);
+  });
+});
+
 const stats = computed(() => {
   return {
-    pending: scores.value.filter((s) => s.Status === "pending").length,
-    approved: scores.value.filter((s) => s.Status === "approved").length,
+    pending: filteredScores.value.filter((s) => s.Status === "pending").length,
+    approved: filteredScores.value.filter((s) => s.Status === "approved").length,
     bestScore:
-      scores.value.length > 0
+      filteredScores.value.length > 0
         ? Math.max(
-            ...scores.value
+            ...filteredScores.value
               .filter((s) => s.Status === "approved")
               .map((s) => s.TotalScore || 0)
           )
@@ -397,6 +428,26 @@ function formatDate(date) {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.search-input {
+  padding: 10px 16px;
+  background: #2d2d2d;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  min-width: 250px;
+  flex: 1;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
 }
 
 .container-filter select {
